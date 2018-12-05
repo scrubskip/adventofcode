@@ -27,7 +27,8 @@ def main():
         print "sleep_id ", most_sleep_id, ", ", most_sleep
         #print('\n'.join(map(str, guard_records[most_sleep_id])))
         print(find_likely_sleep_minute(guard_records[most_sleep_id]))
-        return most_sleep_id * find_likely_sleep_minute(guard_records[most_sleep_id])
+
+    find_likely_sleep_minute_all(guard_records)
 
     return None
 
@@ -63,12 +64,8 @@ def process_logs(lines):
     return guard_records
 
 
-def find_likely_sleep_minute(guard_records):
-    minute_count = [0 for _ in range(60)]
-    for i in range(60):
-        for guard_record in guard_records:
-            if (guard_record.is_sleep(i)):
-                minute_count[i] += 1
+def find_likely_sleep_minute(individual_guard_records):
+    minute_count = get_guard_minute_counts(individual_guard_records)
 
     max_count = 0
     max_index = -1
@@ -79,6 +76,25 @@ def find_likely_sleep_minute(guard_records):
     print minute_count
     print "Max count {0}, index {1}".format(max_count, max_index)
     return max_index
+
+def get_guard_minute_counts(individual_guard_records):
+    minute_count = [0 for _ in range(60)]
+    for i in range(60):
+        for guard_record in individual_guard_records:
+            if (guard_record.is_sleep(i)):
+                minute_count[i] += 1
+    return minute_count
+
+def find_likely_sleep_minute_all(guard_records):
+    winningest_guard_id = [0 for _ in range(60)]
+    guard_minute_counts = dict((k, get_guard_minute_counts(v)) for k, v in guard_records.iteritems())
+    # print guard_minute_counts
+    for i in range(60):
+        max_minute = 0
+        for guard_id in guard_minute_counts:
+            if (guard_minute_counts[guard_id][i]) > max_minute):
+                max_minute = guard_minute_counts[guard_id][i]
+                winningest_guard_id[i] = guard_id
 
 
 class GuardRecord:
