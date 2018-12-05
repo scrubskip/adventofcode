@@ -25,10 +25,12 @@ def main():
 
     if (most_sleep_id is not None):
         print "sleep_id ", most_sleep_id, ", ", most_sleep
-        #print('\n'.join(map(str, guard_records[most_sleep_id])))
+        # print('\n'.join(map(str, guard_records[most_sleep_id])))
         print(find_likely_sleep_minute(guard_records[most_sleep_id]))
 
-    find_likely_sleep_minute_all(guard_records)
+    likely = find_likely_sleep_minute_all(guard_records)
+    print likely
+    print likely[0] * likely[1]
 
     return None
 
@@ -77,6 +79,7 @@ def find_likely_sleep_minute(individual_guard_records):
     print "Max count {0}, index {1}".format(max_count, max_index)
     return max_index
 
+
 def get_guard_minute_counts(individual_guard_records):
     minute_count = [0 for _ in range(60)]
     for i in range(60):
@@ -85,16 +88,28 @@ def get_guard_minute_counts(individual_guard_records):
                 minute_count[i] += 1
     return minute_count
 
+
 def find_likely_sleep_minute_all(guard_records):
     winningest_guard_id = [0 for _ in range(60)]
-    guard_minute_counts = dict((k, get_guard_minute_counts(v)) for k, v in guard_records.iteritems())
+    max_minute_counts = [0 for _ in range(60)]
+    guard_minute_counts = dict((k, get_guard_minute_counts(v))
+                               for k, v in guard_records.iteritems())
     # print guard_minute_counts
     for i in range(60):
-        max_minute = 0
         for guard_id in guard_minute_counts:
-            if (guard_minute_counts[guard_id][i]) > max_minute):
-                max_minute = guard_minute_counts[guard_id][i]
+            if (guard_minute_counts[guard_id][i] > max_minute_counts[i]):
+                max_minute_counts[i] = guard_minute_counts[guard_id][i]
                 winningest_guard_id[i] = guard_id
+
+    # now, loop through for the max minute_count
+    max_minute = 0
+    max_index = -1
+    for i in range(60):
+        if (max_minute_counts[i] > max_minute):
+            max_index = i
+            max_minute = max_minute_counts[i]
+
+    return winningest_guard_id[max_index], max_index
 
 
 class GuardRecord:
