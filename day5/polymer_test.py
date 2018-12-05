@@ -12,6 +12,11 @@ class PolymerTestCase(unittest.TestCase):
     def test_recursive(self):
         self.assertEquals("c", polymer.reduce_polymer_recursive("BaAbc"))
 
+    def test_remove(self):
+        self.assertEquals("c", polymer.remove_and_reduce("Aac", "a"))
+        self.assertEquals("bc", polymer.remove_and_reduce("bAac", "a"))
+        self.assertEquals("c", polymer.remove_and_reduce("bAaBc", "a"))
+
 
 if __name__ == '__main__':
     unittest.main()

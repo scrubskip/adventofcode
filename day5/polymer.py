@@ -1,12 +1,25 @@
 #!/usr/bin/env python
 #
 
+import string
+
 
 def main():
     polymerFile = open("day5input.txt", "r")
     polymer = polymerFile.readline()
-    polymer = reduce_polymer_recursive(polymer)
-    print polymer, ", ", len(polymer)
+    # polymer = reduce_polymer_recursive(polymer)
+    # print polymer, ", ", len(polymer)
+    reduced_counts = dict(zip(string.ascii_lowercase[:26], map(lambda x: len(remove_and_reduce(
+        polymer, x)), string.ascii_lowercase[:26])))
+    print reduced_counts
+    print reduced_counts[min(reduced_counts, key=lambda x: reduced_counts[x])]
+
+
+def remove_and_reduce(polymer, character):
+    print "reducing ", character
+    removed_polymer = filter(lambda x: x != character and x != character.upper(),
+                             polymer)
+    return reduce_polymer_recursive(removed_polymer)
 
 
 def reduce_polymer_recursive(polymer):
