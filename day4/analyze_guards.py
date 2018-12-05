@@ -25,7 +25,7 @@ def main():
 
     if (most_sleep_id is not None):
         print "sleep_id ", most_sleep_id, ", ", most_sleep
-        print('\n'.join(map(str, guard_records[most_sleep_id])))
+        #print('\n'.join(map(str, guard_records[most_sleep_id])))
         print(find_likely_sleep_minute(guard_records[most_sleep_id]))
         return most_sleep_id * find_likely_sleep_minute(guard_records[most_sleep_id])
 
@@ -40,6 +40,7 @@ def process_logs(lines):
     guard_records = []
 
     for line in lines:
+        print line
         data = p.parse(line)
         if (data is not None):
             event_str = data['event']
@@ -91,6 +92,7 @@ class GuardRecord:
         if (self.last_sleep > 0):
             for minute in range(self.last_sleep, minute):
                 self.sleep[minute] = 1
+        self.last_sleep = -1
 
     def go_to_sleep(self, minute):
         self.last_sleep = minute
