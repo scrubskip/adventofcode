@@ -2,24 +2,32 @@ import "dart:async";
 import 'dart:convert';
 import "dart:io";
 
-
 void main(List<String> args) {
-  analyzeFrequency(args[0]);
-}
-
-Future analyzeFrequency(String path) async {
-  var current_frequency = 0;
-  Stream lines = new File(path)
+  new File(args[0])
           .openRead()
           .transform(utf8.decoder)
-          .transform(const LineSplitter());
-  try {
-    await for (var line in lines) {
-      // parse as number
-      current_frequency += int.parse(line);
-    }
-  } catch (_) {
+          .transform(const LineSplitter())
+          .transform(StreamTransformer.fromHandlers(handleData: (String event, EventSink output) {
+            output.add(int.parse(event));
+          })).toList().then((list) => analyzeFrequency(list));
+  
+}
 
+analyzeFrequency(List frequencies) {
+  var currentFrequency = 0;
+  Set seenFrequencies = new Set();
+  var firstSeen = null;
+  while (firstSeen == null) {
+    for (var frequency in frequencies) {
+        // parse as number
+        currentFrequency += frequency;
+        if (firstSeen == null && seenFrequencies.contains(currentFrequency)) {
+          firstSeen = currentFrequency;
+        }
+        seenFrequencies.add(currentFrequency);
+    }
   }
-  stdout.writeln(current_frequency);
+
+  stdout.writeln(currentFrequency);
+  stdout.writeln(firstSeen);
 }
