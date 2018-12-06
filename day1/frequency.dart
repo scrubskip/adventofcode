@@ -2,8 +2,19 @@ import "dart:async";
 import 'dart:convert';
 import "dart:io";
 
+import "package:args/args.dart";
+
+const justOnce = 'just-once';
+
+ArgResults _argResults;
+
 void main(List<String> args) {
-  new File(args[0])
+  exitCode = 0; //presume success
+  final parser = new ArgParser()
+    ..addFlag(justOnce, negatable: false, abbr: 'n');
+
+  _argResults = parser.parse(args);
+  new File(_argResults.rest[0])
       .openRead()
       .transform(utf8.decoder)
       .transform(const LineSplitter())
@@ -12,10 +23,10 @@ void main(List<String> args) {
         output.add(int.parse(event));
       }))
       .toList()
-      .then((list) => analyzeFrequency(list));
+      .then((list) => analyzeFrequency(list, justOnce: _argResults[justOnce]));
 }
 
-analyzeFrequency(List frequencies) {
+analyzeFrequency(List frequencies, {bool justOnce = true}) {
   var currentFrequency = 0;
   Set seenFrequencies = new Set();
   var firstSeen = null;
@@ -27,6 +38,9 @@ analyzeFrequency(List frequencies) {
         firstSeen = currentFrequency;
       }
       seenFrequencies.add(currentFrequency);
+    }
+    if (justOnce) {
+      break;
     }
   }
 
