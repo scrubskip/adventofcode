@@ -2,6 +2,7 @@
 #
 
 import string
+from multiprocessing import Pool
 
 
 def main():
@@ -9,10 +10,19 @@ def main():
     polymer = polymerFile.readline()
     # polymer = reduce_polymer_recursive(polymer)
     # print polymer, ", ", len(polymer)
-    reduced_counts = dict(zip(string.ascii_lowercase[:26], map(lambda x: len(remove_and_reduce(
-        polymer, x)), string.ascii_lowercase[:26])))
+    # reduced_counts = dict(zip(string.ascii_lowercase[:26], map(lambda x: len(remove_and_reduce(
+    #     polymer, x)), string.ascii_lowercase[:26])))
+    characters = string.ascii_lowercase[:26]
+    p = Pool(len(characters))
+
+    reduced_counts = dict(zip(characters, p.map(multi_run_wrapper, zip(
+        [polymer] * len(characters), characters))))
     print reduced_counts
     print reduced_counts[min(reduced_counts, key=lambda x: reduced_counts[x])]
+
+
+def multi_run_wrapper(args):
+    return len(remove_and_reduce(*args))
 
 
 def remove_and_reduce(polymer, character):
