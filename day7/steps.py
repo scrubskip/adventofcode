@@ -14,7 +14,7 @@ def main():
 
 def parse_lines(lines):
     p = compile(
-        "Step {label} must be finished before step {prereq} can begin.")
+        "Step {prereq} must be finished before step {label} can begin.")
     nodes = {}
     for line in lines:
         data = p.parse(line)
@@ -37,28 +37,27 @@ def parse_lines(lines):
     return nodes
 
 
-def find_roots(nodes):
-    return_list = filter(lambda x: not x.has_prereqs(),
+def find_root(nodes):
+    root_list = filter(lambda x: not x.has_prereqs(),
                   map(nodes.get, nodes))
-    return_list.sort()
-    return return_list
+    root_list.sort(key = (lambda x: x.label))
+    return root_list[0] if len(root_list) > 0 else None
 
 def get_sequence(nodes):
     return_list = []
     while (len(nodes) > 0):
-        roots = find_roots(nodes)
-        if (len(roots) == 0):
+        root = find_root(nodes)
+        if (root is None):
             break
-        map(return_list.append, roots)
-        # Now remove the roots as prereqs
-        for node in nodes:
-            for root in roots:
-                nodes[node].remove_prereq(root.label)
         
-        for root in roots:
-            nodes.pop(root.label)
+        # Now remove the root as prereqs
+        for node in nodes:
+            nodes[node].remove_prereq(root.label)
+        
+        return_list.append(root.label)
+        nodes.pop(root.label)
 
-    return ''.join(map(lambda x: x.label, return_list))
+    return ''.join(return_list)
 
 class Node:
 
