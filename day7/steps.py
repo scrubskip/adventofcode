@@ -9,9 +9,7 @@ def main():
 
     nodes = parse_lines(step_lines.readlines())
 
-    roots = find_roots(nodes)
-
-    print roots
+    print get_sequence(nodes)
 
 
 def parse_lines(lines):
@@ -40,9 +38,27 @@ def parse_lines(lines):
 
 
 def find_roots(nodes):
-    return filter(lambda x: not x.has_prereqs,
+    return_list = filter(lambda x: not x.has_prereqs(),
                   map(nodes.get, nodes))
+    return_list.sort()
+    return return_list
 
+def get_sequence(nodes):
+    return_list = []
+    while (len(nodes) > 0):
+        roots = find_roots(nodes)
+        if (len(roots) == 0):
+            break
+        map(return_list.append, roots)
+        # Now remove the roots as prereqs
+        for node in nodes:
+            for root in roots:
+                nodes[node].remove_prereq(root.label)
+        
+        for root in roots:
+            nodes.pop(root.label)
+
+    return ''.join(map(lambda x: x.label, return_list))
 
 class Node:
 
@@ -52,6 +68,11 @@ class Node:
 
     def add_prereq(self, prereq_label):
         self.prereqs.append(prereq_label)
+
+    def remove_prereq(self, prereq_label):
+        # print "Removing {0} from {1}".format(prereq_label, self.label)
+        if (prereq_label in self.prereqs):
+            self.prereqs.remove(prereq_label)
 
     def has_prereqs(self):
         return len(self.prereqs) > 0

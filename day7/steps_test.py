@@ -26,9 +26,35 @@ class StepsTestCase(unittest.TestCase):
         nodeA.add_prereq('B')
 
         roots = steps.find_roots({'A': nodeA, 'B': nodeB})
-        print roots
-        self.assertEquals(1, len(roots))
 
+        self.assertEquals(1, len(roots))
+        self.assertEquals('B', roots[0].label)
+        self.assertFalse(roots[0].has_prereqs())
+
+    def test_sequence(self):
+        nodeA = Node('A')
+        nodeB = Node('B')
+        nodeA.add_prereq('B')
+        nodeC = Node('C')
+        nodeC.add_prereq('B')
+        nodes = {'A' : nodeA, 'B' : nodeB, 'C' : nodeC}
+
+        self.assertEquals('BAC', steps.get_sequence(nodes))
+
+
+    def test_remove_prereqs(self):
+        nodeA = Node('A')
+        nodeB = Node('B')
+        nodeA.add_prereq('B')
+
+        roots = steps.find_roots({'A': nodeA, 'B': nodeB})
+        self.assertTrue(nodeA.has_prereq('B'))
+        self.assertEquals(1, len(roots))
+        nodeA.remove_prereq('B')
+        self.assertFalse(nodeA.has_prereq('B'))
+
+        roots = steps.find_roots({'A': nodeA, 'B': nodeB})
+        self.assertEquals(2, len(roots))
 
 if __name__ == '__main__':
     unittest.main()
