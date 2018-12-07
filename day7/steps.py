@@ -9,9 +9,9 @@ def main():
 
     nodes = parse_lines(step_lines.readlines())
 
-    root = find_root(nodes)
+    roots = find_roots(nodes)
 
-    print root
+    print roots
 
 
 def parse_lines(lines):
@@ -34,6 +34,15 @@ def parse_lines(lines):
                 prereq_node = Node(prereq)
                 nodes[prereq] = prereq_node
 
+            node.add_prereq(prereq)
+
+    return nodes
+
+
+def find_roots(nodes):
+    return filter(lambda x: not x.has_prereqs,
+                  map(nodes.get, nodes))
+
 
 class Node:
 
@@ -43,6 +52,12 @@ class Node:
 
     def add_prereq(self, prereq_label):
         self.prereqs.append(prereq_label)
+
+    def has_prereqs(self):
+        return len(self.prereqs) > 0
+
+    def has_prereq(self, prereq):
+        return prereq in self.prereqs
 
 
 if __name__ == '__main__':
