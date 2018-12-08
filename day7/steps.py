@@ -10,7 +10,12 @@ def main():
 
     nodes = parse_lines(step_lines.readlines())
 
-    print get_sequence(nodes)
+    #print get_sequence(nodes)
+    workers = []
+    for i in range(5):
+        workers.append(Worker())
+    
+    run_work(nodes, workers)
 
 
 def parse_lines(lines):
@@ -39,10 +44,14 @@ def parse_lines(lines):
 
 
 def find_root(nodes):
+    root_list = find_roots(nodes)
+    return root_list[0] if len(root_list) > 0 else None
+
+def find_roots(nodes):
     root_list = filter(lambda x: not x.has_prereqs(),
                   map(nodes.get, nodes))
     root_list.sort(key = (lambda x: x.label))
-    return root_list[0] if len(root_list) > 0 else None
+    return root_list
 
 def get_sequence(nodes):
     return_list = []
@@ -59,6 +68,20 @@ def get_sequence(nodes):
         nodes.pop(root.label)
 
     return ''.join(return_list)
+
+def run_work(nodes, workers):
+    # for each time slice, find available workers
+
+    # remove any of their completed jobs
+
+    # give them the next job ready to go, if multiple jobs are ready
+    # then give them to multiple workers
+
+    # advance all the workers.
+
+
+    # if there are no more nodes, get the time.
+
 
 class Node:
 
