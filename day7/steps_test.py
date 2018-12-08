@@ -1,5 +1,5 @@
 import steps
-from steps import Node
+from steps import Node, Worker
 import unittest
 
 
@@ -70,6 +70,23 @@ class StepsTestCase(unittest.TestCase):
             "Step F must be finished before step E can begin."]
         nodes = steps.parse_lines(test_data)
         self.assertEquals("CABDFE", steps.get_sequence(nodes))
+
+    def test_worker(self):
+        workerA = Worker()
+        self.assertEquals(0, workerA.current_time)
+        workerA.start_job('A')
+        self.assertEquals(0, workerA.start_time)
+        self.assertEquals(61, workerA.end_time)
+
+        workerA.do_work()
+        self.assertEquals(1, workerA.current_time)
+        for i in range(60):
+            self.assertTrue(workerA.is_working(), "Should still be working")
+            workerA.do_work()
+
+        self.assertEquals(61, workerA.current_time)
+        self.assertFalse(workerA.is_working(), 'Should not be working')
+        self.assertEquals('A', workerA.completed_job)
 
 if __name__ == '__main__':
     unittest.main()

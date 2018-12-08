@@ -2,6 +2,7 @@
 #
 
 from parse import compile
+import string
 
 
 def main():
@@ -78,6 +79,29 @@ class Node:
 
     def has_prereq(self, prereq):
         return prereq in self.prereqs
+
+class Worker:
+    def __init__(self):
+        self.current_job = None
+        self.current_time = 0
+        self.start_time = -1
+        self.completed_job = None
+
+    def start_job(self, label):
+        self.start_time = self.current_time
+        self.end_time = self.current_time + (61 + string.ascii_uppercase.index(label))
+        self.current_job = label
+
+    def do_work(self):
+        self.current_time += 1
+        if (self.current_job):
+            if (self.current_time >= self.end_time):
+                self.completed_job = self.current_job
+                self.start_time = -1
+                self.current_job = None
+
+    def is_working(self):
+        return self.current_job is not None
 
 
 if __name__ == '__main__':
