@@ -12,10 +12,11 @@ class LargestAreaTestCase(unittest.TestCase):
         ]
 
         vrange = largest_area.get_visible_range(points)
-        self.assertEquals(5, vrange[0].x)
-        self.assertEquals(0, vrange[0].y)
-        self.assertEquals(25, vrange[1].x)
-        self.assertEquals(10, vrange[1].y)
+        margin = largest_area.get_margin()
+        self.assertEquals(5 - margin, vrange[0].x)
+        self.assertEquals(0 - margin, vrange[0].y)
+        self.assertEquals(25 + margin, vrange[1].x)
+        self.assertEquals(10 + margin, vrange[1].y)
 
     def test_calculate_distance(self):
         self.assertEquals(2, largest_area.calculate_distance(Point(1,1), Point(2,2)))
@@ -31,22 +32,25 @@ class LargestAreaTestCase(unittest.TestCase):
         ]
         vrange = largest_area.get_visible_range(points)
         dmatrix = largest_area.make_matrix(points, vrange)
-        self.assertEquals(23, len(dmatrix))
-        self.assertEquals(20, len(dmatrix[0]))
+        margin = largest_area.get_margin()
+        self.assertEquals(23 + margin * 2, len(dmatrix))
+        self.assertEquals(20 + margin * 2, len(dmatrix[0]))
 
     def test_area(self):
         points = [
             Point(0,0),
+            Point(1,2),
             Point(10, 0),
             Point(10, 10),
             Point(0, 10),
+            Point(5 , 5),
             Point(7, 7)
         ]
         vrange = largest_area.get_visible_range(points)
         dmatrix = largest_area.make_matrix(points, vrange)
         largest = largest_area.find_largest_internal(dmatrix, points)
-        print dmatrix
-        self.assertEquals(137, largest)
+        #print dmatrix
+        self.assertEquals(19, largest)
 
 if __name__ == '__main__':
     unittest.main()

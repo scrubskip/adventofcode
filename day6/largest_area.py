@@ -24,12 +24,15 @@ def parse_points(point_strings):
 
     return return_list
 
+def get_margin():
+    return 110
 
 def get_visible_range(points):
-    max_x = max(points, key=lambda point: point.x).x
-    min_x = min(points, key=lambda point: point.x).x
-    max_y = max(points, key=lambda point: point.y).y
-    min_y = min(points, key=lambda point: point.y).y
+    margin = get_margin()
+    max_x = max(points, key=lambda point: point.x).x + margin
+    min_x = min(points, key=lambda point: point.x).x - margin
+    max_y = max(points, key=lambda point: point.y).y + margin
+    min_y = min(points, key=lambda point: point.y).y - margin
 
     return [Point(min_x, min_y), Point(max_x, max_y)]
 
@@ -74,18 +77,18 @@ def find_largest_internal(distance_matrix, points):
             if (point not in cumulative_area):
                 cumulative_area[point] = 0
             cumulative_area[point] += 1
-
+    print "Infinite points: ", infinite_points
     max_area = max(filter(lambda x: x not in infinite_points, cumulative_area), key = cumulative_area.get)
     print max_area, cumulative_area[max_area]
     return cumulative_area[max_area]
-
+   
 
 class Point:
     def __init__(self, x, y):
         self.x = x
         self.y = y
 
-    def __str__(self):
+    def __repr__(self):
         return "{0},{1}".format(self.x, self.y)
 
 
