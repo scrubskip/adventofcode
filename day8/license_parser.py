@@ -6,7 +6,7 @@ def main():
     license_file = open("day8input.txt", "r")
     license = license_file.readline()
     license_node = parse_node(map(int, license.split()))
-    print license_node.get_sum()
+    print license_node.get_reference_sum()
 
 
 def parse_node(license_entries):
@@ -38,6 +38,17 @@ class Node:
     def get_sum(self):
         return sum(map(lambda x: x.get_sum(), self.nodes)) \
             + sum(self.metadata)
+
+    def get_reference_sum(self):
+        if (len(self.nodes) == 0):
+            return sum(self.metadata)
+        else:
+            reference_sum = 0
+            for entry in self.metadata:
+                entry_index = entry - 1
+                if (entry_index < len(self.nodes) and entry_index >= 0):
+                    reference_sum += self.nodes[entry_index].get_reference_sum()
+            return reference_sum
 
 
 if __name__ == '__main__':
