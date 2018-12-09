@@ -1,11 +1,12 @@
 #!/usr/bin/env python
 #
 
+
 def main():
-    license_file = open("day8input.txt","r")
+    license_file = open("day8input.txt", "r")
     license = license_file.readline()
     license_node = parse_node(map(int, license.split()))
-    print sum_metadata(license_node)
+    print license_node.get_sum()
 
 
 def parse_node(license_entries):
@@ -16,10 +17,10 @@ def parse_node(license_entries):
     node = Node()
     for i in range(num_child_nodes):
         node.add_node(parse_node(license_entries))
-    
+
     for i in range(num_metadata):
         node.add_metadata(license_entries.pop(0))
-    
+
     return node
 
 
@@ -33,6 +34,10 @@ class Node:
 
     def add_metadata(self, entry):
         self.metadata.append(entry)
+
+    def get_sum(self):
+        return sum(map(lambda x: x.get_sum(), self.nodes)) \
+            + sum(self.metadata)
 
 
 if __name__ == '__main__':
