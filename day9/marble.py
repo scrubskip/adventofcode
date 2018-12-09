@@ -5,6 +5,10 @@ def main():
     game.run_game()
     print game.get_high_score()
 
+    game = MarbleGame2(452, 71250 * 100)
+    game.run_game()
+    print game.get_high_score()
+
 
 class MarbleGame:
     def __init__(self, num_players, num_marbles):
@@ -83,6 +87,9 @@ class MarbleGame2:
             insert_before.prev = new_marble
             new_marble.next = insert_before
             new_marble.prev = insert_after
+            self.current_marble = new_marble
+
+        # self.current_marble.print_marble()
 
     def get_high_score(self):
         return max(self.player_scores)
@@ -93,6 +100,19 @@ class Marble:
         self.value = value
         self.next = None
         self.prev = None
+
+    def add_next(self, next_marble):
+        next_marble.next = self.next
+        self.next = next_marble
+        next_marble.prev = self
+
+    def print_marble(self):
+        board = [self.value]
+        current_marble = self
+        while (current_marble.next is not self):
+            current_marble = current_marble.next
+            board.append(current_marble.value)
+        print board
 
 
 if __name__ == '__main__':
