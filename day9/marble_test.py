@@ -1,6 +1,6 @@
 import unittest
 import marble
-from marble import MarbleGame
+from marble import MarbleGame, MarbleGame2
 
 
 class MarbleTestCase(unittest.TestCase):
@@ -12,11 +12,19 @@ class MarbleTestCase(unittest.TestCase):
                        25, 10, 21, 5, 22, 11, 1, 12, 6, 13, 3, 14, 7, 15]
         self.assertEquals(board_state, game.board)
         self.assertEqual(32, game.get_high_score())
+        print "array type", game.player_scores
 
     def test_multiple(self):
         game = MarbleGame(10, 1618)
         game.run_game()
         self.assertEqual(8317, game.get_high_score())
+
+    def test_deque(self):
+        game = MarbleGame2(9, 25)
+        game.run_game()
+        print "node type", game.player_scores
+        self.assertEquals(7, game.current_player)
+        self.assertEqual(32, game.get_high_score())
 
 
 if __name__ == '__main__':

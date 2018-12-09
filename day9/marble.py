@@ -18,7 +18,7 @@ class MarbleGame:
     def run_game(self):
         for marble in range(self.num_marbles):
             progress = marble / float(self.num_marbles)
-            print "progress:", progress
+            # print "progress:", progress
             self.run_step(marble + 1)
 
     def run_step(self, insert_marble):
@@ -45,6 +45,54 @@ class MarbleGame:
 
     def get_high_score(self):
         return max(self.player_scores)
+
+
+class MarbleGame2:
+    def __init__(self, num_players, num_marbles):
+        self.current_marble = Marble(0)
+        self.current_marble.next = self.current_marble
+        self.current_marble.prev = self.current_marble
+        self.num_players = num_players
+        self.player_scores = [0] * num_players
+        self.current_player = 0
+        self.num_marbles = num_marbles
+
+    def run_game(self):
+        for marble in range(self.num_marbles):
+            self.run_step(marble + 1)
+
+    def run_step(self, marble_value):
+        self.current_player = (self.current_player + 1) % self.num_players
+
+        if (marble_value % 23 == 0):
+            self.player_scores[self.current_player] += marble_value
+            # take the marble 7 before
+            for _ in range(7):
+                self.current_marble = self.current_marble.prev
+            self.player_scores[self.current_player] += self.current_marble.value
+            # now remove
+            next_marble = self.current_marble.next
+            self.current_marble.prev.next = next_marble
+            next_marble.prev = self.current_marble.prev
+            self.current_marble = next_marble
+        else:
+            insert_after = self.current_marble.next
+            insert_before = insert_after.next
+            new_marble = Marble(marble_value)
+            insert_after.next = new_marble
+            insert_before.prev = new_marble
+            new_marble.next = insert_before
+            new_marble.prev = insert_after
+
+    def get_high_score(self):
+        return max(self.player_scores)
+
+
+class Marble:
+    def __init__(self, value):
+        self.value = value
+        self.next = None
+        self.prev = None
 
 
 if __name__ == '__main__':
