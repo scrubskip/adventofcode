@@ -1,5 +1,6 @@
 *.pyc
 .vscode/
 *~
-.packages
 *.lock
+*.packages
+*.dart_tool
