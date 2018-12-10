@@ -56,7 +56,7 @@ class LargestAreaTestCase(unittest.TestCase):
         self.assertEquals(23 + margin * 2, len(dmatrix))
         self.assertEquals(20 + margin * 2, len(dmatrix[0]))
 
-    def tast_area(self):
+    def test_area(self):
         points = [
             Point(0, 0),
             Point(1, 2),
@@ -71,6 +71,21 @@ class LargestAreaTestCase(unittest.TestCase):
         largest = largest_area.find_largest_internal(dmatrix, points)
         #print dmatrix
         self.assertEquals(19, largest)
+
+    def test_total_distance_matrix(self):
+        points = [
+            Point(1, 1),
+            Point(1, 6),
+            Point(8, 3),
+            Point(3, 4),
+            Point(5, 5),
+            Point(8, 9)
+        ]
+        vrange = largest_area.get_visible_range(points)
+        dmatrix = largest_area.make_total_distance_matrix(points, vrange)
+        #print dmatrix
+        self.assertEquals(
+            16, largest_area.find_region_within_range(dmatrix, 32))
 
 
 if __name__ == '__main__':

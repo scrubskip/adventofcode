@@ -13,6 +13,9 @@ def main():
     distance_matrix = make_matrix(points, vrange)
     find_largest_internal(distance_matrix, points)
 
+    total_distance_matrix = make_total_distance_matrix(points, vrange)
+    print find_region_within_range(total_distance_matrix, 10000)
+
 
 def parse_points(point_strings):
     p = compile("{x:d}, {y:d}")
@@ -26,7 +29,7 @@ def parse_points(point_strings):
 
 
 def get_margin():
-    return 10
+    return 1
 
 
 def get_visible_range(points):
@@ -61,9 +64,18 @@ def make_matrix(points, vrange):
     return distance_matrix
 
 
-def make_matrix2(points, vrange):
+def make_total_distance_matrix(points, vrange):
     distance_matrix = [[None] * (vrange[1].y - vrange[0].y)
                        for _ in range(vrange[1].x - vrange[0].x)]
+    for i in range(vrange[0].x, vrange[1].x):
+        for j in range(vrange[0].y, vrange[1].y):
+            candidate_point = Point(i, j)
+            total_distance = 0
+            for point in points:
+                total_distance += calculate_distance(candidate_point, point)
+
+            distance_matrix[i - vrange[0].x][j - vrange[0].y] = total_distance
+    return distance_matrix
 
 
 def calculate_distance(point_src, point_dst):
@@ -100,6 +112,16 @@ def find_largest_internal(distance_matrix, points):
                           cumulative_area), key=cumulative_area.get)
     print max_area, cumulative_area[max_area]
     return cumulative_area[max_area]
+
+
+def find_region_within_range(distance_matrix, upper_bound):
+    num_squares = 0
+    for i in range(0, len(distance_matrix)):
+        for j in range(0, len(distance_matrix[i])):
+            total_distance = distance_matrix[i][j]
+            if (total_distance < upper_bound):
+                num_squares += 1
+    return num_squares
 
 
 class Point:
