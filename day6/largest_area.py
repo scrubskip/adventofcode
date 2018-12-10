@@ -24,8 +24,10 @@ def parse_points(point_strings):
 
     return return_list
 
+
 def get_margin():
     return 10
+
 
 def get_visible_range(points):
     margin = get_margin()
@@ -36,11 +38,13 @@ def get_visible_range(points):
 
     return [Point(min_x, min_y), Point(max_x, max_y)]
 
+
 def make_matrix(points, vrange):
-    distance_matrix = [[None] * (vrange[1].y - vrange[0].y) for _ in range(vrange[1].x - vrange[0].x)]
+    distance_matrix = [[None] * (vrange[1].y - vrange[0].y)
+                       for _ in range(vrange[1].x - vrange[0].x)]
     for i in range(vrange[0].x, vrange[1].x):
         for j in range(vrange[0].y, vrange[1].y):
-            candidate_point = Point(i,j)
+            candidate_point = Point(i, j)
             min_distance = None
             stored_value = None
             for point in points:
@@ -48,16 +52,23 @@ def make_matrix(points, vrange):
                 if min_distance == distance:
                     # found a dup
                     stored_value = '.'
-                    break
                 if min_distance is None or distance < min_distance:
                     min_distance = distance
                     stored_value = point
 
+            # print "min_distance {0} to {1} is {2}".format(candidate_point, stored_value, min_distance)
             distance_matrix[i - vrange[0].x][j - vrange[0].y] = stored_value
     return distance_matrix
 
+
+def make_matrix2(points, vrange):
+    distance_matrix = [[None] * (vrange[1].y - vrange[0].y)
+                       for _ in range(vrange[1].x - vrange[0].x)]
+
+
 def calculate_distance(point_src, point_dst):
     return abs(point_src.x - point_dst.x) + abs(point_src.y - point_dst.y)
+
 
 def find_largest_internal(distance_matrix, points):
     # iterate: any points on the edges are not candidates
@@ -68,25 +79,28 @@ def find_largest_internal(distance_matrix, points):
             point = distance_matrix[i][j]
             if (point == '.'):
                 continue
-            if (i == 0 \
-                or j == 0 \
-                or i == len(distance_matrix) - 1 \
-                or j == len(distance_matrix) - 1):
-                    infinite_points.add(distance_matrix[i][j])
-            
+            if (i == 0
+                or j == 0
+                or i == len(distance_matrix) - 1
+                    or j == len(distance_matrix[i]) - 1):
+                # print "Adding ", point, " because of ", i, ",", j
+                infinite_points.add(distance_matrix[i][j])
+
             if (point not in cumulative_area):
                 cumulative_area[point] = 0
             cumulative_area[point] += 1
 
-    candidate_points = filter(lambda x: x not in infinite_points, cumulative_area)
+    candidate_points = filter(
+        lambda x: x not in infinite_points, cumulative_area)
     print "Infinite points: ", infinite_points
-    points_and_areas =  map(lambda x: (x, cumulative_area[x]), candidate_points)
-    points_and_areas.sort(key = lambda x: x[1])
+    points_and_areas = map(lambda x: (x, cumulative_area[x]), candidate_points)
+    points_and_areas.sort(key=lambda x: x[1])
     print "Candidate points: ", points_and_areas
-    max_area = max(filter(lambda x: x not in infinite_points, cumulative_area), key = cumulative_area.get)
+    max_area = max(filter(lambda x: x not in infinite_points,
+                          cumulative_area), key=cumulative_area.get)
     print max_area, cumulative_area[max_area]
     return cumulative_area[max_area]
-   
+
 
 class Point:
     def __init__(self, x, y):
