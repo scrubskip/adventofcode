@@ -9,20 +9,21 @@ def main():
         if (point):
             points.append(point)
 
-    print guess_time(points, 10768)
-
-    matrix = get_points_at_time(points, 10768)
-    print_matrix(matrix)
+    print guess_time(points, 10630)
+    time = 10634
+    matrix = get_matrix_at_time(points, time)
+    print_matrix(matrix, get_visible_range(get_points_at_time(points, time)))
 
 
 def get_visible_range(points):
-    margin = 0
+    margin = 4
     max_x = max(points, key=lambda point: point.x).x + margin
     min_x = min(points, key=lambda point: point.x).x - margin
     max_y = max(points, key=lambda point: point.y).y + margin
     min_y = min(points, key=lambda point: point.y).y - margin
 
     return [Point(min_x, min_y, 0, 0), Point(max_x, max_y, 0, 0)]
+
 
 def guess_time(points, start_time):
     # for each time, check when the coordinates are near one another.
@@ -33,11 +34,8 @@ def guess_time(points, start_time):
     min_time = 0
 
     while True:
-        
-        for point in points:
-            x = point.x + (time * point.dx)
-            y = point.y + (time * point.dy)
-            current_points.append(Point(x, y, 0, 0))
+
+        current_points = get_points_at_time(points, time)
 
         vrange = get_visible_range(current_points)
         area = (vrange[1].x - vrange[0].x) * (vrange[1].y - vrange[0].y)
@@ -50,33 +48,40 @@ def guess_time(points, start_time):
             print "Starting to increase from ", min_bounding_box_area, " to ", area
             print time
             break
-        
+
         time += 1
-    
+
     return min_time
 
 
 def get_points_at_time(points, time):
-    vrange = get_visible_range(points)
-    matrix = [['.'] * (vrange[1].y - vrange[0].y)
-              for _ in range(vrange[1].x - vrange[0].x)]
-    visible_count = 0
+    current_points = []
     for point in points:
         x = point.x + (time * point.dx)
         y = point.y + (time * point.dy)
-        if (x < vrange[1].x - vrange[0].x) and \
-           (y < vrange[1].y - vrange[0].y and \
-           x >=0 and y>= 0):
-            matrix[x - vrange[0].y][y - vrange[0].y] = '#'
-            visible_count += 1
+        current_points.append(Point(x, y, 0, 0))
+    return current_points
 
-    return matrix, visible_count == len(points)
 
-def print_matrix(matrix):
-    for j in range(len(matrix)):
+def get_matrix_at_time(points, time):
+    current_points = get_points_at_time(points, time)
+    vrange = get_visible_range(current_points)
+    matrix = [['.'] * (vrange[1].y - vrange[0].y + 1)
+              for _ in range(vrange[1].x - vrange[0].x + 1)]
+    for point in current_points:
+        x = point.x
+        y = point.y
+        matrix[x - vrange[0].x][y - vrange[0].y] = '#'
+
+    return matrix
+
+
+def print_matrix(matrix, vrange):
+    print vrange
+    for j in range(vrange[0].y, vrange[1].y):
         row = []
-        for i in range(len(matrix[j])):
-            row.append(matrix[i][j])
+        for i in range(vrange[0].x, vrange[1].x):
+            row.append(matrix[i - vrange[0].x][j - vrange[0].y])
         print row
 
 

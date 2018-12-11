@@ -59,20 +59,31 @@ class MessageTestCase(unittest.TestCase):
 
         points = map(Point.parse, point_strs)
         self.assertEqual(len(points), len(filter(None, points)))
-        
-        matrix, found_visible = message.get_points_at_time(points, 3)
-        #message.print_matrix(matrix)
+
+        matrix = message.get_matrix_at_time(points, 3)
+        # message.print_matrix(matrix)
         #print found_visible
         message.guess_time(points, 0)
 
     def test_time(self):
         point_strs = [
             "position=<-31684, -53051> velocity=< 3,  5>",
-            "position=< 10860,  32026> velocity=<-1, -3>"
+            "position=< 10860,  32026> velocity=<-1, -3>",
+            "position=< 42712,  42663> velocity=<-4, -4>",
+            "position=<-52978, -10507> velocity=< 5,  1>",
+            "position=< 42704,  42656> velocity=<-4, -4>"
+            # position=<-42368, -31781> velocity=< 4,  3>
+            # position=< 53391, -53049> velocity=<-5,  5>
+            # position=<-31694, -42409> velocity=< 3,  4>
+            # position=<-52970,  21388> velocity=< 5, -2>
         ]
         points = map(Point.parse, point_strs)
-        #matrix, found_visible = message.get_points_at_time(points, 10768)
-        print message.get_visible_range(points)
+        for i in range(10636, 10640):
+            current_points = message.get_points_at_time(points, 10634)
+            print "time: ", i, message.get_visible_range(current_points)
+        matrix = message.get_matrix_at_time(points, 10634)
+
+        message.print_matrix(matrix, message.get_visible_range(points))
 
 
 if __name__ == '__main__':

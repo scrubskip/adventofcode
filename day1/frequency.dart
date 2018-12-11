@@ -1,12 +1,3 @@
-<<<<<<< HEAD
-import 'dart:io';
-
-void main(List<String> arguments) {
-  exitCode = 0;
-  if (arguments.length == 1) {
-    var path = arguments[0];
-  }
-=======
 import "dart:async";
 import 'dart:convert';
 import "dart:io";
@@ -55,5 +46,4 @@ analyzeFrequency(List frequencies, {bool justOnce = true}) {
 
   stdout.writeln(currentFrequency);
   stdout.writeln(firstSeen);
->>>>>>> 78c388cd83ba6f287929463c4cc80308b70ab9d1
 }
