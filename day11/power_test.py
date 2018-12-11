@@ -31,10 +31,21 @@ class PowerTestCase(unittest.TestCase):
         matrix = power.create_power_matrix(18)
         sum_matrix = power.create_sum_matrix(matrix)
         self.assertEquals(29, sum_matrix[32][44])
-        max_value, (max_x, max_y) = power.get_max(sum_matrix)
+        max_value, max_x, max_y = power.get_max(sum_matrix)
         self.assertEqual(29, max_value)
         self.assertEqual(32, max_x)
         self.assertEqual(44, max_y)
+
+    def test_list_sum_matrix(self):
+        matrix = power.create_power_matrix(18)
+        list_sum_matrix = power.create_list_sum_matrix(matrix, 4)
+        self.assertEquals(29, list_sum_matrix[32][44][2])
+        max_value, max_x, max_y, max_square_size = power.get_list_max(list_sum_matrix)
+        self.assertEqual(36, max_value)
+        self.assertEqual(214, max_x)
+        self.assertEqual(8, max_y)
+        self.assertEqual(4, max_square_size)
+
 
 
 if __name__ == '__main__':
