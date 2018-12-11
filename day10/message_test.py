@@ -12,6 +12,16 @@ class MessageTestCase(unittest.TestCase):
         self.assertEqual(2, point.dx)
         self.assertEqual(-1, point.dy)
 
+    def test_visible_range(self):
+        points = [
+            Point(2, -2, 0, 0),
+            Point(5, 5, 0, 0),
+            Point(0, 10, 0, 0)
+        ]
+
+        vrange = message.get_visible_range(points)
+        self.assertEquals(0, vrange[0].x)
+
     def test_aoc_input(self):
         point_strs = [
             "position=< 9,  1> velocity=< 0,  2>",
@@ -49,10 +59,20 @@ class MessageTestCase(unittest.TestCase):
 
         points = map(Point.parse, point_strs)
         self.assertEqual(len(points), len(filter(None, points)))
+        
         matrix, found_visible = message.get_points_at_time(points, 3)
-        message.print_matrix(matrix)
-        print found_visible
+        #message.print_matrix(matrix)
+        #print found_visible
+        message.guess_time(points, 0)
 
+    def test_time(self):
+        point_strs = [
+            "position=<-31684, -53051> velocity=< 3,  5>",
+            "position=< 10860,  32026> velocity=<-1, -3>"
+        ]
+        points = map(Point.parse, point_strs)
+        #matrix, found_visible = message.get_points_at_time(points, 10768)
+        print message.get_visible_range(points)
 
 
 if __name__ == '__main__':
