@@ -9,10 +9,10 @@ def main():
     print rules
     plants = PlantArray(state)
     for i in range(1, 21):
-        print "Gen ", i
         plants.apply_rules(rules)
+        print "Gen {0:2d}: {1}".format(
+            i, plants)
 
-    print plants
     return plants.get_plant_num()
 
 
@@ -28,14 +28,19 @@ class PlantArray:
     def apply_rules(self, rules):
         changes = []
         # append some empty pots to the front to help match
-        self.state = "...." + self.state + "...."
-        self.zero_index += 4
+        if (not self.state.startswith("....")):
+            self.state = "...." + self.state
+            self.zero_index += 4
+        if (not self.state.endswith("....")):
+            self.state = self.state + "...."
+
         for rule in rules:
             changes += rule.get_changes(self.state)
             # apply changes
-        list_state = list(self.state)
+        list_state = ["."] * len(self.state)
+        changes.sort(key=lambda x: x[0])
         for change in changes:
-            #print "Applying change ", change
+            # print "Applying change ", change
             list_state[change[0]] = change[1]
         self.state = "".join(list_state)
 
@@ -45,8 +50,11 @@ class PlantArray:
             plant_index = i - self.zero_index
             if (self.state[i] == '#'):
                 sum += plant_index
-                print plant_index, " sum: ", sum
+                # print plant_index, " sum: ", sum
         return sum
+
+    def get_state_with_left_padding(self, padding):
+        return self.state[self.zero_index - padding:]
 
     def __repr__(self):
         return "{0}: {1}".format(self.zero_index, self.state)
