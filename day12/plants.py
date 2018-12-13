@@ -4,16 +4,29 @@ from parse import compile
 def main():
     input = open("day12input.txt", "r")
     state = input.readline()[len("initial state: "):]
+    state = state.strip()
     rules = filter(None, map(PlantRule.parse, input.readlines()))
+    rules = filter(lambda x: x.end_state == '#', rules)
+
     print state
     print rules
+    print len(rules)
     plants = PlantArray(state)
-    for i in range(1, 21):
+    print "Gen  0:", ("..." + plants.state)
+    delta_num = 0
+    old_plant_num = 0
+    for i in range(1, 1001):
         plants.apply_rules(rules)
-        print "Gen {0:2d}: {1}".format(
-            i, plants)
+        delta_num = plants.get_plant_num() - old_plant_num
+        old_plant_num = plants.get_plant_num()
+        print "Gen {0:2d}: {1} {2}".format(
+            i, delta_num, plants.get_state_with_left_padding(3))
 
-    return plants.get_plant_num()
+    # real answer: 4386 for 20
+    offset = plants.get_plant_num() - (1000 * delta_num)
+    return 50000000000 * delta_num + offset
+
+    
 
 
 class PlantArray:
@@ -77,6 +90,7 @@ class PlantRule:
         while index != -1:
             changes.append((index + 2, self.end_state))
             index = state.find(self.pattern, index + 1)
+        
         return changes
 
     def __repr__(self):

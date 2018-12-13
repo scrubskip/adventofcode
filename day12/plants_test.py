@@ -22,6 +22,17 @@ class PlantsTestCase(unittest.TestCase):
         self.assertTupleEqual((4, '.'), changes[0])
         self.assertTupleEqual((9, '.'), changes[1])
 
+    def test_ending_rule(self):
+        rules = map(PlantRule.parse, [
+            "##### => #",
+            "####. => #",
+            "###.. => #"
+        ])
+        plants = PlantArray("....#######")
+        plants.apply_rules(rules)
+        print "test ", plants.state
+
+
     def test_rule_apply(self):
         rule = PlantRule.parse("...## => #")
         plants = PlantArray("...##...##")
@@ -37,7 +48,7 @@ class PlantsTestCase(unittest.TestCase):
         self.assertEquals(4, plants.zero_index)
         self.assertEqual(0, plants.get_plant_num())
 
-    def test_multirule_aoc(self):
+    def tast_multirule_aoc(self):
         rules = map(PlantRule.parse, [
             "...## => #",
             "..#.. => #",
@@ -63,17 +74,19 @@ class PlantsTestCase(unittest.TestCase):
         self.assertEquals(4, plants.zero_index)
         plants.apply_rules(rules)
         print plants.get_state_with_left_padding(3)
-        self.assertEquals("....##..##...##....#..#..#..##...", plants.state)
+        self.assertEquals("...##..##...##....#..#..#..##...",
+                          plants.get_state_with_left_padding(3))
         plants.apply_rules(rules)
         print plants.get_state_with_left_padding(3)
         self.assertEquals(
-            "...#.#...#..#.#....#..#..#...#.......", plants.state)
+            "..#.#...#..#.#....#..#..#...#.......",
+            plants.get_state_with_left_padding(3))
         for _ in range(17):
             plants.apply_rules(rules)
             print plants.get_state_with_left_padding(3)
 
+        #print plants.get_plant_num()
         self.assertEqual(325, plants.get_plant_num())
-
 
 if __name__ == '__main__':
     unittest.main()
