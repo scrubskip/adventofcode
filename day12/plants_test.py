@@ -1,6 +1,6 @@
 import unittest
 import plants
-from plants import PlantRule
+from plants import PlantArray, PlantRule
 
 
 class PlantsTestCase(unittest.TestCase):
@@ -9,12 +9,77 @@ class PlantsTestCase(unittest.TestCase):
         self.assertEqual("...##", rule.pattern)
         self.assertEqual("#", rule.end_state)
 
-    def test_rule_apply(self):
+    def test_rule_changes(self):
         rule = PlantRule.parse("...## => #")
 
         changes = rule.get_changes("...##...##")
         self.assertTupleEqual((2, '#'), changes[0])
         self.assertTupleEqual((7, '#'), changes[1])
+
+        rule = PlantRule.parse(".#### => .")
+
+        changes = rule.get_changes("...####.####.#.#")
+        self.assertTupleEqual((4, '.'), changes[0])
+        self.assertTupleEqual((9, '.'), changes[1])
+
+    def test_rule_apply(self):
+        rule = PlantRule.parse("...## => #")
+        plants = PlantArray("...##...##")
+        plants.apply_rules([rule])
+        self.assertEquals("......###..###....", plants.state)
+        self.assertEquals(4, plants.zero_index)
+        rule = PlantRule.parse("..### => .")
+        plants.apply_rules([rule])
+        self.assertEquals("...........##...##........", plants.state)
+        self.assertEquals(8, plants.zero_index)
+
+    def test_plant_num(self):
+        plants = PlantArray("...##...##")
+        self.assertEquals(0, plants.zero_index)
+        self.assertEqual(3 + 4 + 8 + 9, plants.get_plant_num())
+        plants.apply_rules([])
+        self.assertEquals(4, plants.zero_index)
+        self.assertEqual(3 + 4 + 8 + 9, plants.get_plant_num())
+
+    def test_multirule_aoc(self):
+        rules = map(PlantRule.parse, [
+            ".#### => .",
+            "...#. => .",
+            ".##.. => #",
+            "#.##. => .",
+            "#..## => .",
+            "##### => #",
+            "####. => #",
+            ".##.# => #",
+            "#.### => .",
+            "...## => #",
+            ".#.## => #",
+            "#..#. => #",
+            "#.#.. => #",
+            ".###. => #",
+            "##.## => #",
+            "##..# => .",
+            ".#... => #",
+            "###.# => .",
+            "..##. => .",
+            "..... => .",
+            "###.. => #",
+            "..#.# => .",
+            ".#..# => #",
+            "##... => #",
+            "#.... => .",
+            "##.#. => .",
+            "..#.. => #",
+            "....# => .",
+            "#...# => .",
+            "#.#.# => #",
+            "..### => .",
+            ".#.#. => #",
+        ])
+        plants = PlantArray("#..#.#..##......###...###")
+        plants.apply_rules(rules)
+        print plants
+        print plants.get_plant_num()
 
 
 if __name__ == '__main__':
