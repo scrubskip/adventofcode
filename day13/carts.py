@@ -4,8 +4,8 @@ from collections import Counter
 def main():
     track_lines = open("day13input.txt", "r")
     track = Track.parse(track_lines.readlines())
-    while not track.do_tick():
-        1+1
+    while track.do_tick():
+        pass
 
 
 class Track:
@@ -54,13 +54,30 @@ class Track:
         return self.carts
 
     def do_tick(self):
+        """Update all the carts and return True if there is a crash
+        """
         self.carts.sort(key=lambda x: x.position)
         for cart in self.carts:
             cart.update(self.state)
             for other_cart in self.carts:
                 if (cart.position == other_cart.position and cart != other_cart):
                     print "Crash at {0}".format(cart.position)
-                    return True
+                    return False
+        return True
+
+    def do_tick_remove(self):
+        """Tick, but remove any crashed carts immediately.
+        Return when there is only one cart left.
+        """
+        self.carts.sort(key=lambda x: x.position)
+        for cart in self.carts:
+            cart.update(self.state)
+            for other_cart in self.carts:
+                if (cart.position == other_cart.position and cart != other_cart):
+                    print "Crash at {0}".format(cart.position)
+                    self.carts.remove(cart)
+                    self.carts.remove(other_cart)
+
         return False
 
     def print_track(self):

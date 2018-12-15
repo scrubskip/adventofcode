@@ -56,8 +56,22 @@ class CartTest(unittest.TestCase):
         self.assertEqual(">", track.carts[1].direction)
         track.do_tick()
         self.assertEqual("v", track.carts[0].direction)
-        while not track.do_tick():
-            1+1
+        while track.do_tick():
+            pass
+
+    def test_aoc_remove_input(self):
+        input = [
+            "/>-<\\  ",
+            "|   |  ",
+            "| /<+-\\",
+            "| | | v",
+            "\\>+</ |",
+            "  |   ^",
+            "  \\<->/"
+        ]
+        track = Track.parse(input)
+        self.assertEqual(8, len(track.carts))
+        while track.do_tick()
 
 
 if __name__ == "__main__":
