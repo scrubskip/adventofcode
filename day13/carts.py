@@ -76,6 +76,9 @@ class Cart:
 
     def update(self, state):
         old_cell = state[self.position[1]][self.position[0]]
+        if (old_cell == ' '):
+            raise RuntimeError("Empty cell: {0}, direction: {1}".format(
+                self.position, self.direction))
         delta_x = 0
         delta_y = 0
         if (self.direction == "<"):
@@ -92,6 +95,7 @@ class Cart:
         self.position = (self.position[0] + delta_x,
                          self.position[1] + delta_y)
         # Now update the direction based on the new state
+        print "Updating ", self.position, ' old ', old_cell, ' direction ', self.direction
         new_cell = state[self.position[1]][self.position[0]]
         if (new_cell == "+"):
             # turn based on next_turn
@@ -99,7 +103,7 @@ class Cart:
                 self.direction, self.next_turn)
             self.next_turn = self.get_next_turn()
         if (new_cell == "\\"):
-            if (old_cell == "-"):
+            if (delta_y == 0):
                 if (delta_x == 1):
                     self.direction = "v"
                 elif (delta_x == -1):
@@ -107,7 +111,7 @@ class Cart:
                 else:
                     raise RuntimeError("Bad direction at {0} new cell {1} from old cell {2}".format(
                         self.position, new_cell, old_cell))
-            elif (old_cell == "|"):
+            else:
                 if (delta_y == -1):
                     self.direction = "<"
                 elif (delta_y == 1):
@@ -116,7 +120,7 @@ class Cart:
                     raise RuntimeError("Bad direction at {0} new cell {1} from old cell {2}".format(
                         self.position, new_cell, old_cell))
         if (new_cell == "/"):
-            if (old_cell == "-"):
+            if (delta_y == 0):
                 if (delta_x == -1):
                     self.direction = "v"
                 elif (delta_x == 1):
@@ -124,7 +128,7 @@ class Cart:
                 else:
                     raise RuntimeError("Bad direction at {0} new cell {1} from old cell {2}".format(
                         self.position, new_cell, old_cell))
-            elif (old_cell == "|"):
+            else:
                 if (delta_y == -1):
                     self.direction = ">"
                 elif (delta_y == 1):
