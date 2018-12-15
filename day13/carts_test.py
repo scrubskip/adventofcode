@@ -70,8 +70,10 @@ class CartTest(unittest.TestCase):
             "  \\<->/"
         ]
         track = Track.parse(input)
-        self.assertEqual(8, len(track.carts))
-        while track.do_tick()
+        self.assertEqual(9, len(track.carts))
+        while track.do_tick_remove():
+            pass
+        print "Remaining ", track.carts
 
 
 if __name__ == "__main__":

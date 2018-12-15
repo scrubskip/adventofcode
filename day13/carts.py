@@ -4,8 +4,11 @@ from collections import Counter
 def main():
     track_lines = open("day13input.txt", "r")
     track = Track.parse(track_lines.readlines())
-    while track.do_tick():
+    # while track.do_tick():
+    #     pass
+    while track.do_tick_remove():
         pass
+    print "Remaining ", track.carts
 
 
 class Track:
@@ -70,15 +73,23 @@ class Track:
         Return when there is only one cart left.
         """
         self.carts.sort(key=lambda x: x.position)
+        ignored_carts = set()
         for cart in self.carts:
+            if (cart in ignored_carts):
+                continue
             cart.update(self.state)
             for other_cart in self.carts:
+                if (cart in ignored_carts):
+                    continue
                 if (cart.position == other_cart.position and cart != other_cart):
                     print "Crash at {0}".format(cart.position)
-                    self.carts.remove(cart)
-                    self.carts.remove(other_cart)
+                    ignored_carts.add(cart)
+                    ignored_carts.add(other_cart)
+                    break
+        for cart in ignored_carts:
+            self.carts.remove(cart)
 
-        return False
+        return len(self.carts) > 1
 
     def print_track(self):
         for row in self.state:
