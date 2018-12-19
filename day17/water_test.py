@@ -35,9 +35,9 @@ class WaterTest(unittest.TestCase):
         self.assertEqual(1, ground.min_y)
         self.assertEqual(13, ground.max_y)
 
-        ground.emit_water()
+        ground.emit_full()
         ground.print_board()
-        print len(ground.reachable)
+        print ground.get_reachable()
 
 
 if __name__ == "__main__":
