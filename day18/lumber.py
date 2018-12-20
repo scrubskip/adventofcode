@@ -9,7 +9,7 @@ def main():
 
     print board.width, ", ", board.height
 
-    for i in xrange(10):
+    for i in xrange(1000000000):
         if i % 1000 == 0:
             print "minute ", i
         board.do_tick()
@@ -21,29 +21,36 @@ class Board:
     def __init__(self):
         self.width = 0
         self.height = 0
-        self.state = []
+        self.state = ""
         self.memos = {}
 
     def add_row(self, row):
-        self.state.append(row.strip())
+        self.state += row.strip()
         if (self.width == 0):
             self.width = len(row.strip())
-        self.height = len(self.state)
+        self.height += 1
 
     def do_tick(self):
 
-        self.new_state = []
+        if (self.state in self.memos):
+            self.state = self.memos[self.state]
+            return True
 
+        new_state = []
         # go through each character and figure out the new state.
         for y in xrange(0, self.height):
-            row = self.state[y]
-            new_row = []
             for x in xrange(0, self.width):
-                new_char = self.get_new(row[x], x, y)
-                new_row.append(new_char)
-            self.new_state.append(''.join(new_row))
+                new_char = self.get_new(self.get_char(x, y), x, y)
+                new_state.append(new_char)
 
-        self.state = self.new_state
+        if (not self.state in self.memos):
+            self.memos[self.state] = ''.join(new_state)
+
+        self.state = self.memos[self.state]
+        return False
+
+    def get_char(self, x, y):
+        return self.state[x + (y * self.width)]
 
     def get_new(self, current, x, y):
         # get the valid neighbors
@@ -54,7 +61,7 @@ class Board:
                 if (new_x >= 0 and new_x < self.width) and \
                         (new_y >= 0 and new_y < self.height) and \
                         (new_x != x or new_y != y):
-                    neighbor = self.state[new_y][new_x]
+                    neighbor = self.get_char(new_x, new_y)
                     if (neighbor == '|'):
                         tree_count += 1
                     if (neighbor == '#'):
@@ -77,8 +84,16 @@ class Board:
         return current
 
     def print_board(self):
-        for row in self.state:
+        for row in self.get_board():
             print row
+
+    def get_board(self):
+        output = []
+        for row_index in xrange(self.height):
+            start_index = row_index * self.width
+            row = self.state[start_index:start_index + self.width]
+            output.append(row)
+        return output
 
     def get_resource_value(self):
         num_woods = 0

@@ -21,7 +21,7 @@ class LumberTest(unittest.TestCase):
         map(board.add_row, lines)
         self.assertEqual(10, board.width)
         self.assertEqual(10, board.height)
-        self.assertEqual(lines, board.state)
+        self.assertEqual(lines, board.get_board())
         board.print_board()
 
         new_lines = [
@@ -37,7 +37,7 @@ class LumberTest(unittest.TestCase):
             "....||..|."
         ]
         board.do_tick()
-        self.assertEqual(new_lines, board.state)
+        self.assertEqual(new_lines, board.get_board())
 
         new_lines = [
             ".......#..",
@@ -52,7 +52,7 @@ class LumberTest(unittest.TestCase):
             ".|||||||||"
         ]
         board.do_tick()
-        self.assertEqual(new_lines, board.state)
+        self.assertEqual(new_lines, board.get_board())
 
         new_lines = [
             ".||##.....",
@@ -69,7 +69,7 @@ class LumberTest(unittest.TestCase):
 
         for _ in range(8):
             board.do_tick()
-        self.assertEqual(new_lines, board.state)
+        self.assertEqual(new_lines, board.get_board())
 
         self.assertEqual(1147, board.get_resource_value())
 
