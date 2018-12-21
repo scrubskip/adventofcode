@@ -2,7 +2,7 @@
 seti 123 0 5 # reg[5] = 123
 bani 5 456 5 # reg[5] = 456 & reg[5] (123)
 eqri 5 72 5 # reg[5] = 1 if reg[5] == 72 else 0
-addr 5 1 1 # reg[1] = reg[5] + reg[1] (0)
+addr 5 1 1 # reg[1] = reg[1] + reg[5]
 seti 0 0 1 # reg[1] = 0
 seti 0 4 5 # reg[5] = 0
 bori 5 65536 3 # reg[3] = reg[5] | 65536
@@ -17,7 +17,7 @@ addr 4 1 1 # reg[1] = reg[4] + reg[1]
 addi 1 1 1 # reg[1] = reg[1] + 1
 seti 27 1 1 # reg[1] = 27
 seti 0 2 4 # reg[4] = 0
-addi 4 1 2 # reg[2] = reg[1] + 1
+addi 4 1 2 # reg[2] = reg[1] + 4
 muli 2 256 2 # reg[2] = reg[2] * 256
 gtrr 2 3 2 # reg[2] = 1 if reg[2] > reg[3]
 addr 2 1 1 # reg[1] = reg[2] + reg[1]

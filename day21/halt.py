@@ -6,8 +6,8 @@ def main():
     executor.load_program(open("day21input.txt", "r"))
     print "IP register ", executor.ip_register, " num commands: ", len(
         executor.program)
-
-    executor.run_program(write_out=True)
+    # executor.registers[0] = 1024276
+    executor.run_program(write_out=False)
 
 
 class OpcodeExecutor:
@@ -19,6 +19,8 @@ class OpcodeExecutor:
         self.ip_register = 0
         self.ip_value = 0
         self.program = []
+        self.seen_five = []
+        self.seen_five_set = set()
 
     COMMAND_MATCHER = compile("{command} {a:d} {b:d} {c:d}")
 
@@ -36,21 +38,42 @@ class OpcodeExecutor:
     def run_program(self, write_out=True):
         execution_count = 0
         while (self.ip_value >= 0 and self.ip_value < len(self.program)):
-            self.registers[self.ip_register] = self.ip_value
-            instruction = self.program[self.ip_value]
-            old_data = list(self.registers)
-
-            self.executeCommand(instruction[0], instruction[1])
-
-            if (write_out):
-                print "ip={0} {1} {2} {3} {4}".format(
-                    self.ip_value, old_data, instruction[0], instruction[1], self.registers)
-
-            self.ip_value = self.registers[self.ip_register]
-            self.ip_value += 1
+            # if execution_count % 1000 == 0:
+                #print "count ", execution_count, ", ", len(self.seen_five)
+            self.do_next_instruction(write_out)
             execution_count += 1
 
         return execution_count
+
+    def do_next_instruction(self, write_out):
+        self.registers[self.ip_register] = self.ip_value
+        instruction = self.program[self.ip_value]
+        old_data = list(self.registers)
+
+        if (self.ip_value == 28):
+            # print "Comparing {0} to {1} ({2}) {3}".format(
+            #    self.registers[0], bin(self.registers[5]), self.registers[5], len(self.seen_five))
+            if (self.registers[5] in self.seen_five_set):
+                print "Already seen ", self.registers[5], ", last = ", self.seen_five[len(
+                    self.seen_five) - 1]
+                exit()
+
+            self.seen_five.append(self.registers[5])
+            self.seen_five_set.add(self.registers[5])
+
+        self.executeCommand(instruction[0], instruction[1])
+
+        if (write_out):
+            print "ip={0} {1} {2} {3} {4}".format(
+                self.ip_value, old_data, instruction[0], instruction[1], self.registers)
+
+        if self.registers[5] != old_data[5]:
+            pass
+            # print "Register 5 changed: {0} to {1}".format(
+            #    old_data[5], self.registers[5])
+
+        self.ip_value = self.registers[self.ip_register]
+        self.ip_value += 1
 
     def executeCommand(self, command, args):
         # Where to store the output
