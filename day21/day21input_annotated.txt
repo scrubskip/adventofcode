@@ -1,0 +1,32 @@
+#ip 1
+seti 123 0 5 # reg[5] = 123
+bani 5 456 5 # reg[5] = 456 & reg[5] (123)
+eqri 5 72 5 # reg[5] = 1 if reg[5] == 72 else 0
+addr 5 1 1 # reg[1] = reg[5] + reg[1] (0)
+seti 0 0 1 # reg[1] = 0
+seti 0 4 5 # reg[5] = 0
+bori 5 65536 3 # reg[3] = reg[5] | 65536
+seti 521363 7 5 # reg[5] = 521363
+bani 3 255 4 # reg[4] = reg[3] | 255
+addr 5 4 5 # reg[5] = reg[4] + reg[5]
+bani 5 16777215 5 # reg[5] = reg[5] | 16777215
+muli 5 65899 5 # reg[5] = 65899 * reg[5]
+bani 5 16777215 5 # reg[5] = 1677215 & reg[5]
+gtir 256 3 4 # reg[4] = 1 if 256 > reg[3] else 0
+addr 4 1 1 # reg[1] = reg[4] + reg[1]
+addi 1 1 1 # reg[1] = reg[1] + 1
+seti 27 1 1 # reg[1] = 27
+seti 0 2 4 # reg[4] = 0
+addi 4 1 2 # reg[2] = reg[1] + 1
+muli 2 256 2 # reg[2] = reg[2] * 256
+gtrr 2 3 2 # reg[2] = 1 if reg[2] > reg[3]
+addr 2 1 1 # reg[1] = reg[2] + reg[1]
+addi 1 1 1 # reg[1] = reg[1] + 1
+seti 25 2 1 # reg[1] = 25
+addi 4 1 4 # reg[4] = reg[4] + 1
+seti 17 3 1 # reg[1] = 17 # jump to 18
+setr 4 2 3 # reg[3] = reg[4]
+seti 7 1 1 # reg[1] = 7
+eqrr 5 0 4 # reg[4] = 1 if reg[5] == reg[0] else 0
+addr 4 1 1 # reg[1] = reg[4] + reg[1]
+seti 5 8 1 # reg[1] = 5
