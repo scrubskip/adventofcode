@@ -2,7 +2,19 @@ from parse import compile
 
 
 def main():
-    pass
+    executor = OpcodeExecutor()
+    executor.load_program(open("day19input.txt", "r"))
+    print "IP register ", executor.ip_register, " num commands: ", len(
+        executor.program)
+    # executor.run_program(write_out=False)
+    # print executor.registers
+
+    print "Running again"
+    executor.registers[0] = 1
+    executor.ip_value = 0
+
+    executor.run_program(write_out=True)
+    print executor.registers
 
 
 class OpcodeExecutor:
@@ -12,6 +24,7 @@ class OpcodeExecutor:
     def __init__(self):
         self.registers = [0, 0, 0, 0, 0, 0]
         self.ip_register = 0
+        self.ip_value = 0
         self.program = []
 
     COMMAND_MATCHER = compile("{command} {a:d} {b:d} {c:d}")
@@ -27,8 +40,24 @@ class OpcodeExecutor:
                 self.program.append(
                     (data['command'], [data['a'], data['b'], data['c']]))
 
-    def executeCommand(self, command, args, initial=[0, 0, 0, 0, 0, 0]):
-        self.registers = initial
+    def run_program(self, write_out=True):
+        while (self.ip_value >= 0 and self.ip_value < len(self.program)):
+            self.registers[self.ip_register] = self.ip_value
+            instruction = self.program[self.ip_value]
+            old_data = list(self.registers)
+
+            self.executeCommand(instruction[0], instruction[1])
+
+            if (write_out):
+                print "ip={0} {1} {2} {3} {4}".format(
+                    self.ip_value, old_data, instruction[0], instruction[1], self.registers)
+
+            self.ip_value = self.registers[self.ip_register]
+            self.ip_value += 1
+            if (self.registers[0] != old_data[0]):
+                print "register 0 changed: ", self.registers
+
+    def executeCommand(self, command, args):
         # Where to store the output
         resultIndex = args[2]
         argB = args[1] if (command.endswith("i")) else self.registers[args[1]]
@@ -65,3 +94,7 @@ class OpcodeExecutor:
 
         self.registers[resultIndex] = resultValue
         return self.registers
+
+
+if __name__ == "__main__":
+    main()

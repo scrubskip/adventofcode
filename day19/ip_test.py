@@ -33,6 +33,7 @@ class IpTest(unittest.TestCase):
         executor.load_program(input)
         self.assertEquals(0, executor.ip_register)
         self.assertEquals(7, len(executor.program))
+        executor.run_program()
 
 
 if __name__ == "__main__":
