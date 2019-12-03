@@ -9,15 +9,15 @@ def main():
     #opcode_data = run(opcode_data, noun = 12, verb = 2)
     #return opcode_data[0]
 
-
     for noun_arg in range(100):
         for verb_arg in range(100):
-            test_data = run(opcode_data, noun = noun_arg, verb = verb_arg)
+            test_data = run(opcode_data, noun=noun_arg, verb=verb_arg)
             if (test_data[0] == 19690720):
-                print "Found at ", noun_arg, ", ", verb_arg
+                print("Found at ", noun_arg, ", ", verb_arg)
                 return
 
-    print "Not found"
+    print("Not found")
+
 
 def run(data, *args, **kwargs):
     program_counter = 0
@@ -30,7 +30,7 @@ def run(data, *args, **kwargs):
         data[1] = noun
     if (verb):
         data[2] = verb
-    
+
     while (True):
         opcode = data[program_counter]
         if (opcode == 99):
@@ -56,5 +56,6 @@ def run(data, *args, **kwargs):
 
     return data
 
+
 if __name__ == "__main__":
-    print main()
+    print(main())
