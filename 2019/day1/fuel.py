@@ -25,4 +25,4 @@ def get_fuel_requirement_inclusive(mass):
 
 
 if __name__ == "__main__":
-    print main()
+    print(main())
