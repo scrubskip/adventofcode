@@ -36,6 +36,26 @@ class WiresTestCase(unittest.TestCase):
         intersection = wires.get_intersection(coordinates_1, coordinates_2)
         self.assertEqual(135, wires.get_distance(intersection))
 
+    def test_map(self):
+        map1 = wires.get_wire_distance_map("R8,U5,L5,D3".split(","))
+        map2 = wires.get_wire_distance_map("U7,R6,D4,L4".split(","))
+
+        self.assertEqual(30, wires.get_intersection_from_maps(map1, map2)[0])
+
+        map1 = wires.get_wire_distance_map(
+            "R75,D30,R83,U83,L12,D49,R71,U7,L72".split(","))
+        map2 = wires.get_wire_distance_map(
+            "U62,R66,U55,R34,D71,R55,D58,R83".split(","))
+
+        self.assertEqual(610, wires.get_intersection_from_maps(map1, map2)[0])
+
+        map1 = wires.get_wire_distance_map(
+            "R98,U47,R26,D63,R33,U87,L62,D20,R33,U53,R51".split(","))
+        map2 = wires.get_wire_distance_map(
+            "U98,R91,D20,R16,D67,R40,U7,R15,U6,R7".split(","))
+
+        self.assertEqual(410, wires.get_intersection_from_maps(map1, map2)[0])
+
 
 def make_tuple(point):
     return tuple(point)
