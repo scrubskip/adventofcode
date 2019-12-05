@@ -5,10 +5,13 @@ import "package:args/args.dart";
 
 ArgResults _argResults;
 
-void main(List<String> args) {
+void main(List<String> args) async {
   final parser = ArgParser();
 
   _argResults = parser.parse(args);
+  List<String> input = await new File(_argResults.rest[0]).readAsLines();
+  List<Nanobot> bots = input.map(Nanobot.parse).toList();
+  stdout.writeln(getNeighboringBots(bots));
 }
 
 int getNeighboringBots(List<Nanobot> bots) {
