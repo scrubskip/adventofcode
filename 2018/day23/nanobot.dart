@@ -1,6 +1,4 @@
 import "dart:io";
-import "dart:math";
-import "dart:collection";
 import "package:args/args.dart";
 
 ArgResults _argResults;
