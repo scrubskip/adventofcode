@@ -1,15 +1,21 @@
 import "dart:io";
 
 import "package:args/args.dart";
+import "package:image/image.dart";
 
 ArgResults _argResults;
+
+final int COLOR_BLACK = Color.fromRgb(0, 0, 0);
+final int COLOR_WHITE = Color.fromRgb(255, 255, 255);
 
 void main(List<String> args) async {
   final parser = ArgParser();
 
   _argResults = parser.parse(args);
   String input = await new File(_argResults.rest[0]).readAsString();
-  List<Layer> layers = parseImage(input, 25, 6);
+  int width = 25;
+  int height = 6;
+  List<Layer> layers = parseImage(input, width, height);
   // Find the layer with the least 0s.
   Layer layer = findLeastZeroes(layers);
   if (layer != null) {
@@ -18,6 +24,10 @@ void main(List<String> args) async {
     int result = onesCount * twosCount;
     stdout.writeln("Output: $result");
   }
+  Image image = getImage(layers, width, height);
+  File outputFile = new File(_argResults.rest[1]);
+  PngEncoder encoder = new PngEncoder();
+  outputFile.writeAsBytesSync(encoder.encodeImage(image));
 }
 
 List<Layer> parseImage(String input, int width, int height) {
@@ -47,6 +57,23 @@ Layer findLeastZeroes(List<Layer> layers) {
         });
   }
   return leastLayer;
+}
+
+Image getImage(List<Layer> layers, int width, int height) {
+  Image image = new Image(width, height);
+  // Loop through pixels. For each layer, if it's 2, go down the layers until we see a 0 or 1.
+  for (int x = 0; x < width; x++) {
+    for (int y = 0; y < height; y++) {
+      for (Layer layer in layers) {
+        int value = layer.getValue(x, y);
+        if (value != 2) {
+          image.setPixel(x, y, value == 0 ? COLOR_BLACK : COLOR_WHITE);
+          break;
+        }
+      }
+    }
+  }
+  return image;
 }
 
 class Layer {

@@ -1,9 +1,11 @@
 import "package:test/test.dart";
+import "package:image/image.dart";
 import 'image.dart';
 
 void main() {
   test("Layer class", _testLayerClass);
   test("Layer read", _testImageRead);
+  test("Image create", _testImageWrite);
 }
 
 void _testLayerClass() {
@@ -24,4 +26,13 @@ void _testImageRead() {
   expect(layers[0].getZeroesCount(), 0);
   expect(layers[1].getZeroesCount(), 1);
   expect(findLeastZeroes(layers), layers[0]);
+}
+
+void _testImageWrite() {
+  List<Layer> layers = parseImage("0222112222120000", 2, 2);
+  Image image = getImage(layers, 2, 2);
+  expect(image.getPixel(0, 0), COLOR_BLACK);
+  expect(image.getPixel(1, 0), COLOR_WHITE);
+  expect(image.getPixel(0, 1), COLOR_WHITE);
+  expect(image.getPixel(1, 1), COLOR_BLACK);
 }
