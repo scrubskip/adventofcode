@@ -1,3 +1,4 @@
+import 'dart:collection';
 import "dart:io";
 import 'dart:math';
 
@@ -48,6 +49,24 @@ Point findGreatestPoint(List<Point> points) {
   return greatestPoint;
 }
 
+SplayTreeMap<double, List<Point>> getPointsByAngle(
+    Point basePoint, List<Point> points) {
+  SplayTreeMap<double, List<Point>> map =
+      new SplayTreeMap<double, List<Point>>();
+
+  for (Point point in points) {
+    if (point != basePoint) {
+      // Get the angle;
+      double angle = basePoint.getAngle(point);
+      map.putIfAbsent(angle, () => []);
+      // Now do insertion sort based on the manhattan distance.
+
+    }
+  }
+
+  return map;
+}
+
 class Point {
   int x, y;
 
@@ -55,5 +74,9 @@ class Point {
 
   double getAngle(Point other) {
     return atan2(other.x - this.x, other.y - this.y);
+  }
+
+  int getDistance(Point other) {
+    return (other.x - this.x).abs() + (other.y - this.y).abs();
   }
 }
