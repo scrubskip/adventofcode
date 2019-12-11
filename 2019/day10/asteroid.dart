@@ -81,4 +81,8 @@ class Point {
   double getDistance(Point other) {
     return math.sqrt((other.x - this.x) ^ 2 + (other.y - this.y) ^ 2);
   }
+
+  int getDistance(Point other) {
+    return (other.x - this.x).abs() + (other.y - this.y).abs();
+  }
 }
