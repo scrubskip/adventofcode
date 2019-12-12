@@ -14,20 +14,19 @@ void testSimple() {
   List<Point> points = parsePoints(input);
   expect(points.length, 10);
   Point greatestPoint = findGreatestPoint(points);
-  expect(greatestPoint.x, 3);
-  expect(greatestPoint.y, 4);
+  expect(greatestPoint, Point(3, 4));
 
-  Point origin = new Point(0, 0);
-  Point up = new Point(0, 1);
-  expect(origin.getAngle(up), 0);
+  Point origin = new Point(1, 1);
+  Point up = new Point(1, 0);
+  expect(origin.getAngleInDegrees(up), 0);
   expect(origin.getDistance(up), 1);
-  Point right = new Point(1, 0);
-  expect(origin.getAngle(right), 90);
+  Point right = new Point(2, 1);
+  expect(origin.getAngleInDegrees(right), 90);
   expect(origin.getDistance(right), 1);
-  Point down = new Point(0, -1);
-  expect(origin.getAngle(down), 180);
-  Point left = new Point(-1, 0);
-  expect(origin.getAngle(left), 270);
+  Point down = new Point(1, 2);
+  expect(origin.getAngleInDegrees(down), 180);
+  Point left = new Point(0, 1);
+  expect(origin.getAngleInDegrees(left), 270);
 }
 
 void testBigger() {
@@ -54,10 +53,10 @@ void testPointsByAngle() {
   List<String> input = [".#.", ".#.", ".#.", "...", ".#."];
   List<Point> points = parsePoints(input);
   Point greatestPoint = findGreatestPoint(points);
-  stdout.writeln("greatest point $greatestPoint");
+  expect(greatestPoint, Point(1, 1));
   List<Point> vaporizationOrder = getVaporizationOrder(points, greatestPoint);
   expect(points.length - 1, vaporizationOrder.length);
-  stdout.writeln(vaporizationOrder);
+  expect(vaporizationOrder, [Point(1, 0), Point(1, 2), Point(1, 4)]);
 }
 
 void testVaporizationSimple() {
@@ -70,7 +69,7 @@ void testVaporizationSimple() {
   ];
   List<Point> points = parsePoints(input);
   Point greatestPoint = findGreatestPoint(points);
-  stdout.writeln("greatest point $greatestPoint");
+  expect(greatestPoint, Point(8, 3));
   List<Point> vaporizationOrder = getVaporizationOrder(points, greatestPoint);
   expect(points.length - 1, vaporizationOrder.length);
   stdout.writeln(vaporizationOrder);

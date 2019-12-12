@@ -3,6 +3,7 @@ import "dart:io";
 import 'dart:math' as math;
 
 import "package:args/args.dart";
+import "package:tuple/tuple.dart";
 
 ArgResults _argResults;
 
@@ -38,11 +39,15 @@ Point findGreatestPoint(List<Point> points) {
   Point greatestPoint = null;
   for (Point basePoint in points) {
     Set<double> angles = new Set<double>();
-    points.forEach(
-        (searchPoint) => {angles.add(basePoint.getAngle(searchPoint))});
+    for (Point point in points) {
+      double angle = basePoint.getAngle(point);
+      angles.add(angle);
+      // stdout.writeln("angle $angle $basePoint $point");
+    }
     if (angles.length > greatestCount) {
       greatestCount = angles.length;
       greatestPoint = basePoint;
+      //stdout.writeln("Found greatest point {$greatestPoint} with $greatestCount");
     }
   }
   stdout.writeln(greatestCount);
@@ -50,9 +55,9 @@ Point findGreatestPoint(List<Point> points) {
 }
 
 List<Point> getVaporizationOrder(List<Point> points, Point basePoint) {
-  SplayTreeMap<double, List<Point>> pointsByAngle =
-      getPointsByAngle(points, basePoint);
+  var pointsByAngle = getPointsByAngle(points, basePoint);
   List<Point> returnPoints = [];
+
   double angle = pointsByAngle.firstKey();
   while (angle != null) {
     List<Point> anglePoints = pointsByAngle[angle];
@@ -71,9 +76,7 @@ List<Point> getVaporizationOrder(List<Point> points, Point basePoint) {
 
 SplayTreeMap<double, List<Point>> getPointsByAngle(
     List<Point> points, Point basePoint) {
-  SplayTreeMap<double, List<Point>> map =
-      new SplayTreeMap<double, List<Point>>();
-
+  var map = SplayTreeMap<double, List<Point>>();
   for (Point point in points) {
     if (point != basePoint) {
       // Get the angle;
@@ -107,17 +110,23 @@ class Point {
   Point(this.x, this.y);
 
   double getAngle(Point other) {
-    return ((math.atan2(other.x - this.x, other.y - this.y) * 180.0 / math.pi) +
-            360) %
-        360;
+    return math.atan2(other.x - x, other.y - y) % (2 * math.pi);
+  }
+
+  double getAngleInDegrees(Point other) {
+    return ((180 - (getAngle(other) * 180 / math.pi))) % 360;
   }
 
   double getDistance(Point other) {
-    return math.sqrt((other.x - this.x) ^ 2 + (other.y - this.y) ^ 2);
+    return math
+        .sqrt((other.x - this.x).abs() ^ 2 + (other.y - this.y).abs() ^ 2);
   }
 
   @override
   toString() {
     return "[${this.x}, ${this.y}]";
   }
+
+  bool operator ==(o) => o is Point && o.x == x && o.y == y;
+  int get hashCode => x.hashCode ^ y.hashCode;
 }
