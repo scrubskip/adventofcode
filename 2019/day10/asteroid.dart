@@ -3,7 +3,6 @@ import "dart:io";
 import 'dart:math' as math;
 
 import "package:args/args.dart";
-import "package:tuple/tuple.dart";
 
 ArgResults _argResults;
 
@@ -15,9 +14,13 @@ void main(List<String> args) async {
   List<String> input = await new File(_argResults.rest[0]).readAsLines();
   List<Point> points = parsePoints(input);
   Point point = findGreatestPoint(points);
-  int x = point.x;
-  int y = point.y;
-  stdout.writeln("$x $y");
+  // int x = point.x;
+  // int y = point.y;
+  // stdout.writeln("$x $y");
+  List<Point> order = getVaporizationOrder(points, point);
+  Point destroy = order[199];
+  int answer = 100 * destroy.x + destroy.y;
+  stdout.writeln("$destroy $answer");
 }
 
 List<Point> parsePoints(List<String> input) {
@@ -74,35 +77,37 @@ List<Point> getVaporizationOrder(List<Point> points, Point basePoint) {
   return returnPoints;
 }
 
-Tuple2<List<double>, Map<double, List<Point>>> getPointsByAngle(
+SplayTreeMap<double, List<Point>> getPointsByAngle(
     List<Point> points, Point basePoint) {
   var map = SplayTreeMap<double, List<Point>>();
   for (Point point in points) {
     if (point != basePoint) {
       // Get the angle;
-      double angle = point.getAngle(basePoint);
-      angles.add(angle);
-      map.putIfAbsent(angle, () => []);
-      // For list, insertion sort it.
-      List<Point> anglePoints = map[angle];
-      int index = 0;
-      double distance = point.getDistance(basePoint);
-      while (index < anglePoints.length) {
-        // This can't be equal, otherwise the points would not be unique.
-        if (anglePoints[index].getDistance(basePoint) > distance) {
-          break;
-        }
-        index++;
-      }
-      if (index >= anglePoints.length || index == 0) {
-        anglePoints.add(point);
+      double angle = basePoint.getAngleInDegrees(point);
+      if (!map.containsKey(angle)) {
+        map[angle] = [point];
       } else {
-        anglePoints.insert(index - 1, point);
+        // For list, insertion sort it.
+        List<Point> anglePoints = map[angle];
+        int index = 0;
+        double distance = point.getDistance(basePoint);
+        while (index < anglePoints.length) {
+          // This can't be equal, otherwise the points would not be unique.
+          if (anglePoints[index].getDistance(basePoint) > distance) {
+            break;
+          }
+          index++;
+        }
+        if (index >= anglePoints.length) {
+          anglePoints.add(point);
+        } else {
+          anglePoints.insert(index, point);
+        }
       }
     }
   }
 
-  return Tuple2(angles.toList(), map);
+  return map;
 }
 
 class Point {
