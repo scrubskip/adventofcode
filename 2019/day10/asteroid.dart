@@ -3,6 +3,7 @@ import "dart:io";
 import 'dart:math' as math;
 
 import "package:args/args.dart";
+import "package:tuple/tuple.dart";
 
 ArgResults _argResults;
 
@@ -38,11 +39,15 @@ Point findGreatestPoint(List<Point> points) {
   Point greatestPoint = null;
   for (Point basePoint in points) {
     Set<double> angles = new Set<double>();
-    points.forEach(
-        (searchPoint) => {angles.add(basePoint.getAngle(searchPoint))});
+    for (Point point in points) {
+      double angle = basePoint.getAngle(point);
+      angles.add(angle);
+      // stdout.writeln("angle $angle $basePoint $point");
+    }
     if (angles.length > greatestCount) {
       greatestCount = angles.length;
       greatestPoint = basePoint;
+      //stdout.writeln("Found greatest point {$greatestPoint} with $greatestCount");
     }
   }
   stdout.writeln(greatestCount);
@@ -50,34 +55,36 @@ Point findGreatestPoint(List<Point> points) {
 }
 
 List<Point> getVaporizationOrder(List<Point> points, Point basePoint) {
-  SplayTreeMap<double, List<Point>> pointsByAngle =
-      getPointsByAngle(points, basePoint);
+  var pointsByAngle = getPointsByAngle(points, basePoint);
   List<Point> returnPoints = [];
-  double angle = pointsByAngle.firstKey();
-  while (angle != null) {
-    List<Point> anglePoints = pointsByAngle[angle];
-    // Pop the first one off.
-    returnPoints.add(anglePoints.removeAt(0));
-    if (anglePoints.isEmpty) {
-      pointsByAngle.remove(angle);
-    }
-    angle = pointsByAngle.firstKeyAfter(angle);
-    if (angle == null) {
-      angle = pointsByAngle.firstKey();
-    }
-  }
+  List<double> angles = pointsByAngle.item1;
+  // Find the index of the first item that is up.
+
+  // double angle = pointsByAngle.firstKey();
+  // while (angle != null) {
+  //   List<Point> anglePoints = pointsByAngle[angle];
+  //   // Pop the first one off.
+  //   returnPoints.add(anglePoints.removeAt(0));
+  //   if (anglePoints.isEmpty) {
+  //     pointsByAngle.remove(angle);
+  //   }
+  //   angle = pointsByAngle.firstKeyAfter(angle);
+  //   if (angle == null) {
+  //     angle = pointsByAngle.firstKey();
+  //   }
+  // }
   return returnPoints;
 }
 
-SplayTreeMap<double, List<Point>> getPointsByAngle(
+Tuple2<List<double>, Map<double, List<Point>>> getPointsByAngle(
     List<Point> points, Point basePoint) {
-  SplayTreeMap<double, List<Point>> map =
-      new SplayTreeMap<double, List<Point>>();
-
+  Map<double, List<Point>> map = Map<double, List<Point>>();
+  Set<double> angles = new Set<double>();
   for (Point point in points) {
     if (point != basePoint) {
       // Get the angle;
       double angle = point.getAngle(basePoint);
+      angles.add(angle);
       map.putIfAbsent(angle, () => []);
       // For list, insertion sort it.
       List<Point> anglePoints = map[angle];
@@ -98,7 +105,7 @@ SplayTreeMap<double, List<Point>> getPointsByAngle(
     }
   }
 
-  return map;
+  return Tuple2(angles.toList(), map);
 }
 
 class Point {
@@ -107,17 +114,23 @@ class Point {
   Point(this.x, this.y);
 
   double getAngle(Point other) {
-    return ((math.atan2(other.x - this.x, other.y - this.y) * 180.0 / math.pi) +
-            360) %
-        360;
+    return (math.pi / 2) - math.atan2(y - other.y, other.x - x);
+  }
+
+  double getAngleInDegrees(Point other) {
+    return getAngle(other) * 180 / math.pi;
   }
 
   double getDistance(Point other) {
-    return math.sqrt((other.x - this.x) ^ 2 + (other.y - this.y) ^ 2);
+    return math
+        .sqrt((other.x - this.x).abs() ^ 2 + (other.y - this.y).abs() ^ 2);
   }
 
   @override
   toString() {
     return "[${this.x}, ${this.y}]";
   }
+
+  bool operator ==(o) => o is Point && o.x == x && o.y == y;
+  int get hashCode => x.hashCode ^ y.hashCode;
 }
