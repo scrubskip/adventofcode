@@ -4,9 +4,9 @@ import "asteroid.dart";
 
 void main() {
   test("Simple", testSimple);
-  test("Bigger", testBigger);
-  test("Points by angle", testPointsByAngle);
-  test("Vaporization", testVaporizationSimple);
+  //test("Bigger", testBigger);
+  //test("Points by angle", testPointsByAngle);
+  //test("Vaporization", testVaporizationSimple);
 }
 
 void testSimple() {
@@ -17,6 +17,7 @@ void testSimple() {
   expect(greatestPoint, Point(3, 4));
 
   Point origin = new Point(1, 1);
+<<<<<<< HEAD
   Point up = new Point(1, 0);
   expect(origin.getAngleInDegrees(up), 0);
   expect(origin.getDistance(up), 1);
@@ -25,6 +26,16 @@ void testSimple() {
   expect(origin.getDistance(right), 1);
   Point down = new Point(1, 2);
   expect(origin.getAngleInDegrees(down), 180);
+=======
+  Point up = new Point(0, 1);
+  expect(origin.getAngleInDegrees(up), 180);
+  expect(origin.getDistance(up), 1);
+  Point right = new Point(2, 1);
+  expect(origin.getAngleInDegrees(right), 0);
+  expect(origin.getDistance(right), 1);
+  Point down = new Point(1, 2);
+  expect(origin.getAngleInDegrees(down), 90);
+>>>>>>> 90c2ce1bc1ce76df34842c16cf01f521c363e81f
   Point left = new Point(0, 1);
   expect(origin.getAngleInDegrees(left), 270);
 }

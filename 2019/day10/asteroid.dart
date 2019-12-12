@@ -74,13 +74,14 @@ List<Point> getVaporizationOrder(List<Point> points, Point basePoint) {
   return returnPoints;
 }
 
-SplayTreeMap<double, List<Point>> getPointsByAngle(
+Tuple2<List<double>, Map<double, List<Point>>> getPointsByAngle(
     List<Point> points, Point basePoint) {
   var map = SplayTreeMap<double, List<Point>>();
   for (Point point in points) {
     if (point != basePoint) {
       // Get the angle;
       double angle = point.getAngle(basePoint);
+      angles.add(angle);
       map.putIfAbsent(angle, () => []);
       // For list, insertion sort it.
       List<Point> anglePoints = map[angle];
@@ -101,7 +102,7 @@ SplayTreeMap<double, List<Point>> getPointsByAngle(
     }
   }
 
-  return map;
+  return Tuple2(angles.toList(), map);
 }
 
 class Point {
