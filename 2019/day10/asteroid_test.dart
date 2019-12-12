@@ -1,10 +1,12 @@
 import "package:test/test.dart";
-import "dart:math" as math;
+import "dart:io";
 import "asteroid.dart";
 
 void main() {
   test("Simple", testSimple);
   test("Bigger", testBigger);
+  test("Points by angle", testPointsByAngle);
+  test("Vaporization", testVaporizationSimple);
 }
 
 void testSimple() {
@@ -46,4 +48,30 @@ void testBigger() {
   Point greatestPoint = findGreatestPoint(points);
   expect(greatestPoint.x, 5);
   expect(greatestPoint.y, 8);
+}
+
+void testPointsByAngle() {
+  List<String> input = [".#.", ".#.", ".#.", "...", ".#."];
+  List<Point> points = parsePoints(input);
+  Point greatestPoint = findGreatestPoint(points);
+  stdout.writeln("greatest point $greatestPoint");
+  List<Point> vaporizationOrder = getVaporizationOrder(points, greatestPoint);
+  expect(points.length - 1, vaporizationOrder.length);
+  stdout.writeln(vaporizationOrder);
+}
+
+void testVaporizationSimple() {
+  List<String> input = [
+    ".#....#####...#..",
+    "##...##.#####..##",
+    "##...#...#.#####.",
+    "..#.....#...###..",
+    "..#.#.....#....##"
+  ];
+  List<Point> points = parsePoints(input);
+  Point greatestPoint = findGreatestPoint(points);
+  stdout.writeln("greatest point $greatestPoint");
+  List<Point> vaporizationOrder = getVaporizationOrder(points, greatestPoint);
+  expect(points.length - 1, vaporizationOrder.length);
+  stdout.writeln(vaporizationOrder);
 }

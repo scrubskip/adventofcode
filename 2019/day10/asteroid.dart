@@ -49,18 +49,52 @@ Point findGreatestPoint(List<Point> points) {
   return greatestPoint;
 }
 
+List<Point> getVaporizationOrder(List<Point> points, Point basePoint) {
+  SplayTreeMap<double, List<Point>> pointsByAngle =
+      getPointsByAngle(points, basePoint);
+  List<Point> returnPoints = [];
+  double angle = pointsByAngle.firstKey();
+  while (angle != null) {
+    List<Point> anglePoints = pointsByAngle[angle];
+    // Pop the first one off.
+    returnPoints.add(anglePoints.removeAt(0));
+    if (anglePoints.isEmpty) {
+      pointsByAngle.remove(angle);
+    }
+    angle = pointsByAngle.firstKeyAfter(angle);
+    if (angle == null) {
+      angle = pointsByAngle.firstKey();
+    }
+  }
+  return returnPoints;
+}
+
 SplayTreeMap<double, List<Point>> getPointsByAngle(
-    Point basePoint, List<Point> points) {
+    List<Point> points, Point basePoint) {
   SplayTreeMap<double, List<Point>> map =
       new SplayTreeMap<double, List<Point>>();
 
   for (Point point in points) {
     if (point != basePoint) {
       // Get the angle;
-      double angle = basePoint.getAngle(point);
+      double angle = point.getAngle(basePoint);
       map.putIfAbsent(angle, () => []);
-      // Now do insertion sort based on the manhattan distance.
-
+      // For list, insertion sort it.
+      List<Point> anglePoints = map[angle];
+      int index = 0;
+      double distance = point.getDistance(basePoint);
+      while (index < anglePoints.length) {
+        // This can't be equal, otherwise the points would not be unique.
+        if (anglePoints[index].getDistance(basePoint) > distance) {
+          break;
+        }
+        index++;
+      }
+      if (index >= anglePoints.length || index == 0) {
+        anglePoints.add(point);
+      } else {
+        anglePoints.insert(index - 1, point);
+      }
     }
   }
 
@@ -82,7 +116,8 @@ class Point {
     return math.sqrt((other.x - this.x) ^ 2 + (other.y - this.y) ^ 2);
   }
 
-  int getDistance(Point other) {
-    return (other.x - this.x).abs() + (other.y - this.y).abs();
+  @override
+  toString() {
+    return "[${this.x}, ${this.y}]";
   }
 }
