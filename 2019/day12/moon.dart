@@ -10,11 +10,13 @@ void main(List<String> args) async {
 
   List<String> input = await new File(_argResults.rest[0]).readAsLines();
   List<Moon> moons = input.map(Moon.parse).toList();
-  for (int index = 0; index < 1000; index++) {
-    runStep(moons);
-  }
-  int totalEnergy = getTotalEnergy(moons);
-  stdout.writeln("$totalEnergy");
+  // for (int index = 0; index < 1000; index++) {
+  //   runStep(moons);
+  // }
+  // int totalEnergy = getTotalEnergy(moons);
+  // stdout.writeln("$totalEnergy");
+  List<int> reps = getReps(moons);
+  stdout.writeln("$reps");
 }
 
 void runStep(List<Moon> moons) {
@@ -41,17 +43,29 @@ List<int> getReps(List<Moon> moons) {
   int step = 1;
   while (xStep == null || yStep == null || zStep == null) {
     runStep(moons);
+    int sameXCount = 0;
+    int sameYCount = 0;
+    int sameZCount = 0;
     for (int index = 0; index < moons.length; index++) {
       // Check a dimension
       if (xStep == null && moons[index].dimensionEqual(startState[index], 0)) {
-        xStep = step;
+        sameXCount++;
       }
       if (yStep == null && moons[index].dimensionEqual(startState[index], 1)) {
-        yStep = step;
+        sameYCount++;
       }
       if (zStep == null && moons[index].dimensionEqual(startState[index], 2)) {
-        zStep = step;
+        sameZCount++;
       }
+    }
+    if (xStep == null && sameXCount == moons.length) {
+      xStep = step;
+    }
+    if (yStep == null && sameYCount == moons.length) {
+      yStep = step;
+    }
+    if (zStep == null && sameZCount == moons.length) {
+      zStep = step;
     }
     step++;
   }
