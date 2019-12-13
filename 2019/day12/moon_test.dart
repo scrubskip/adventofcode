@@ -4,6 +4,7 @@ import "dart:io";
 
 void main() {
   test("Simple", _testSimple);
+  test("Repeat", _testRepeat);
 }
 
 void _testSimple() {
@@ -34,4 +35,16 @@ void _testSimple() {
   }
 
   expect(getTotalEnergy(moons), 179);
+}
+
+void _testRepeat() {
+  List<String> input = [
+    "<x=-1, y=0, z=2>",
+    "<x=2, y=-10, z=-7>",
+    "<x=4, y=-8, z=8>",
+    "<x=3, y=5, z=-1>"
+  ];
+  List<Moon> moons = input.map(Moon.parse).toList();
+  List<int> steps = getReps(moons);
+  stdout.writeln(steps);
 }

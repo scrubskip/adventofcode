@@ -33,6 +33,41 @@ int getTotalEnergy(List<Moon> moons) {
   return moons.map((moon) => moon.getTotalEnergy()).reduce((x, y) => x + y);
 }
 
+List<int> getReps(List<Moon> moons) {
+  // Loop through until we have identified when each axis is the same as the beginning.
+  int xStep, yStep, zStep;
+  // Make a copy
+  List<Moon> startState = moons.map(Moon.fromMoon).toList();
+  int step = 1;
+  while (xStep == null || yStep == null || zStep == null) {
+    runStep(moons);
+    for (int index = 0; index < moons.length; index++) {
+      // Check a dimension
+      if (xStep == null && moons[index].dimensionEqual(startState[index], 0)) {
+        xStep = step;
+      }
+      if (yStep == null && moons[index].dimensionEqual(startState[index], 1)) {
+        yStep = step;
+      }
+      if (zStep == null && moons[index].dimensionEqual(startState[index], 2)) {
+        zStep = step;
+      }
+    }
+    step++;
+  }
+  return [xStep, yStep, zStep];
+}
+
+int getGcd(int a, int b) {
+  int t;
+  while (b != 0) {
+    t = b;
+    b = a % b;
+    a = t;
+  }
+  return a;
+}
+
 class Moon {
   List<int> position;
   List<int> velocity;
@@ -51,6 +86,11 @@ class Moon {
           [0, 0, 0]);
     }
     throw new ArgumentError("Could not parse $input");
+  }
+
+  static Moon fromMoon(Moon other) {
+    return Moon([other.position[0], other.position[1], other.position[2]],
+        [other.velocity[0], other.velocity[1], other.velocity[2]]);
   }
 
   void adjustVelocity(Moon other) {
@@ -79,5 +119,10 @@ class Moon {
   @override
   String toString() {
     return "pos=$position, vel=$velocity";
+  }
+
+  bool dimensionEqual(Moon other, int dimension) {
+    return position[dimension] == other.position[dimension] &&
+        velocity[dimension] == other.velocity[dimension];
   }
 }
