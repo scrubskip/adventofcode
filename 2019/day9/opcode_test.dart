@@ -49,6 +49,6 @@ void _testBigNumber() {
 
 void _testReal() {
   String input = new File("2019/day9/day9input.txt").readAsStringSync();
-  run(input.split(",").map(int.parse).toList(), 1,
+  run(input.split(",").map(int.parse).toList(), 2,
       (output) => stdout.writeln("$output"));
 }

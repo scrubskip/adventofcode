@@ -1,28 +1,49 @@
 import 'dart:collection';
 import "dart:io";
+import "package:image/image.dart";
 
 import "package:args/args.dart";
 
+import '../day8/image.dart';
+
 ArgResults _argResults;
 
-void main(List<String> args) {
+final int COLOR_BLACK = Color.fromRgb(0, 0, 0);
+final int COLOR_WHITE = Color.fromRgb(255, 255, 255);
+
+void main(List<String> args) async {
   final parser = ArgParser();
 
   _argResults = parser.parse(args);
 
-  Future<String> input = new File(_argResults.rest[0]).readAsString();
+  String input = await new File(_argResults.rest[0]).readAsString();
 
-  input.then((input_string) =>
-      runHull(input_string.split(",").map(int.parse).toList()));
+  Hull hull = runHull(input.split(",").map(int.parse).toList());
+  outputHullImage(hull, _argResults.rest[1]);
 }
 
-int runHull(List<int> input) {
+Hull runHull(List<int> input) {
   Hull hull = new Hull();
-
+  hull.setPaint(Point(0, 0), 1); // part 2
   run(input, () => hull.getCurrentColor(),
       (output) => hull.handleOutput(output));
-  stdout.writeln("${hull.paintCount}");
-  return hull.paintCount;
+
+  return hull;
+}
+
+void outputHullImage(Hull hull, String fileOut) {
+  File file = new File(fileOut);
+  int width = (hull.maxX - hull.minX).abs();
+  int height = (hull.maxY - hull.minY).abs();
+  Image image = new Image(width + 1, height + 1);
+  for (int x = hull.minX; x <= hull.maxX; x++) {
+    for (int y = hull.minY; y <= hull.maxY; y++) {
+      image.setPixel(x - hull.minX, y - hull.minY,
+          hull.getColor(Point(x, y)) == 0 ? COLOR_BLACK : COLOR_WHITE);
+    }
+  }
+  PngEncoder encoder = new PngEncoder();
+  file.writeAsBytesSync(encoder.encodeImage(image));
 }
 
 List<int> run(List<int> inputCode,
@@ -124,6 +145,10 @@ class Hull {
   Direction currentDirection = Direction.NORTH;
   int paintCount = 0;
   bool handleColor = true;
+  int minX = 0;
+  int maxX = 0;
+  int minY = 0;
+  int maxY = 0;
 
   int getCurrentColor() {
     return getColor(currentPosition);
@@ -175,6 +200,18 @@ class Hull {
       case Direction.WEST:
         currentPosition.x--;
         break;
+    }
+    if (currentPosition.y < minY) {
+      minY = currentPosition.y;
+    }
+    if (currentPosition.y > maxY) {
+      maxY = currentPosition.y;
+    }
+    if (currentPosition.x < minX) {
+      minX = currentPosition.x;
+    }
+    if (currentPosition.x > maxX) {
+      maxX = currentPosition.x;
     }
   }
 }
