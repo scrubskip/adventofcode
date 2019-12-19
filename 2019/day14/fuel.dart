@@ -24,22 +24,70 @@ int getMinOre(List<Conversion> conversions) {
     throw new ArgumentError(
         "Fuel conversion != 1. ${fuelConversion.output.number}");
   }
-  return getOreCount(fuelConversion.output, conversionMap).ceil();
+  // Get reactants
+  Map<String, int> input = new Map<String, int>();
+  input["FUEL"] = 1;
+  Map<String, int> reactants = expandReactants(input, conversionMap);
+  while (reactants.length > 1 || reactants["ORE"] == null) {
+    reactants = expandReactants(reactants, conversionMap);
+  }
+  // Now we should only have "ORE" in here.
+  return reactants["ORE"];
 }
 
-double getOreCount(ReactionActor actor, Map<String, Conversion> conversionMap) {
+Map<String, int> expandReactants(
+    Map<String, int> reactants, Map<String, Conversion> conversionMap) {
+  var reactantMap = new Map<String, int>();
+  for (String label in reactants.keys) {
+    Conversion conversion = conversionMap[label];
+    for (ReactionActor actor in conversion.inputs) {
+      int desiredQuantity =
+          (actor.number * reactants[label] / conversion.output.number).ceil();
+      if (reactantMap.containsKey(actor.label)) {
+        reactantMap[actor.label] += desiredQuantity;
+      } else {
+        reactantMap[actor.label] = desiredQuantity;
+      }
+    }
+  }
+  // Now for each label, adjust the map based on the conversion outputs.
+  for (String label in reactantMap.keys) {
+    if (label == "ORE") {
+      continue;
+    }
+    Conversion conversion = conversionMap[label];
+    reactantMap[label] =
+        minRequired(conversion.output.number, reactantMap[label]);
+  }
+  return reactantMap;
+}
+
+int getOreCount(ReactionActor actor, Map<String, Conversion> conversionMap,
+    [int desiredQuantity = 1]) {
   Conversion conversion = conversionMap[actor.label];
+  desiredQuantity = minRequired(conversion.output.number, desiredQuantity);
   List<ReactionActor> inputActors = conversion.inputs;
 
   if (inputActors.length == 1 && inputActors[0].isOre()) {
-    return inputActors[0].number * actor.number / conversion.output.number;
+    return (inputActors[0].number * desiredQuantity / conversion.output.number)
+        .floor();
   }
   // Otherwise, go searching.
-  double oreCount = 0;
+  int oreCount = 0;
   for (ReactionActor actor in inputActors) {
-    oreCount += getOreCount(actor, conversionMap) * conversion.output.number;
+    // Create a new actor with the scale
+    oreCount +=
+        getOreCount(actor, conversionMap, actor.number * desiredQuantity);
   }
-  return oreCount * actor.number;
+  return oreCount;
+}
+
+int minRequired(int actorNumber, int desiredQuantity) {
+  int output = actorNumber;
+  while (output < desiredQuantity) {
+    output += actorNumber;
+  }
+  return output;
 }
 
 int getGcdMultiple(List<int> inputs) {

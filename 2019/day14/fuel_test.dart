@@ -6,6 +6,7 @@ void main() {
   test("Parse", _testParse);
   test("GCD", _testGcd);
   test("Simple", _testSimple);
+  test("AoC Input", _testAocInput);
 }
 
 void _testParse() {
@@ -54,4 +55,17 @@ void _testSimple() {
       .toList();
 
   expect(getMinOre(conversions), 32);
+}
+
+void _testAocInput() {
+  var conversions = [
+    "9 ORE => 2 A",
+    "8 ORE => 3 B",
+    "7 ORE => 5 C",
+    "3 A, 4 B => 1 AB",
+    "5 B, 7 C => 1 BC",
+    "4 C, 1 A => 1 CA",
+    "2 AB, 3 BC, 4 CA => 1 FUEL"
+  ].map(Conversion.parse).toList();
+  expect(getMinOre(conversions), 165);
 }
