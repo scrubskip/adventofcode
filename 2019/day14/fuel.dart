@@ -39,14 +39,22 @@ Map<String, int> expandReactants(
     Map<String, int> reactants, Map<String, Conversion> conversionMap) {
   var reactantMap = new Map<String, int>();
   for (String label in reactants.keys) {
-    Conversion conversion = conversionMap[label];
-    for (ReactionActor actor in conversion.inputs) {
-      int desiredQuantity =
-          (actor.number * reactants[label] / conversion.output.number).ceil();
-      if (reactantMap.containsKey(actor.label)) {
-        reactantMap[actor.label] += desiredQuantity;
+    if (label == "ORE") {
+      if (reactantMap.containsKey("ORE")) {
+        reactantMap["ORE"] += reactants["ORE"];
       } else {
-        reactantMap[actor.label] = desiredQuantity;
+        reactantMap["ORE"] = reactants["ORE"];
+      }
+    } else {
+      Conversion conversion = conversionMap[label];
+      for (ReactionActor actor in conversion.inputs) {
+        int desiredQuantity =
+            (actor.number * reactants[label] / conversion.output.number).ceil();
+        if (reactantMap.containsKey(actor.label)) {
+          reactantMap[actor.label] += desiredQuantity;
+        } else {
+          reactantMap[actor.label] = desiredQuantity;
+        }
       }
     }
   }
