@@ -2,12 +2,12 @@ import "dart:io";
 
 import "package:args/args.dart";
 
-void main(List<String> args) async {
+void main(List<String> args) {
   final parser = ArgParser();
 
   ArgResults argResults = parser.parse(args);
 
-  List<String> inputStr = await new File(argResults.rest[0]).readAsLinesSync();
+  List<String> inputStr = new File(argResults.rest[0]).readAsLinesSync();
   List<int> input = inputStr.map(int.parse).toList();
   stdout.writeln(getTwoNumbers(input));
   stdout.writeln(getThreeNumbers(input));
