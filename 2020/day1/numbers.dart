@@ -15,10 +15,7 @@ void main(List<String> args) {
 
 int getTwoNumbers(List<int> input) {
   for (int index = 0; index < input.length; index++) {
-    for (int indexOther = 0; indexOther < input.length; indexOther++) {
-      if (index == indexOther) {
-        continue;
-      }
+    for (int indexOther = index + 1; indexOther < input.length; indexOther++) {
       if (input[index] + input[indexOther] == 2020) {
         return input[index] * input[indexOther];
       }
@@ -29,13 +26,10 @@ int getTwoNumbers(List<int> input) {
 
 int getThreeNumbers(List<int> input) {
   for (int index = 0; index < input.length; index++) {
-    for (int indexOther = 0; indexOther < input.length; indexOther++) {
-      for (int indexAgain = 0; indexAgain < input.length; indexAgain++) {
-        if (index == indexOther ||
-            index == indexAgain ||
-            indexAgain == indexOther) {
-          continue;
-        }
+    for (int indexOther = index + 1; indexOther < input.length; indexOther++) {
+      for (int indexAgain = indexOther + 1;
+          indexAgain < input.length;
+          indexAgain++) {
         if (input[index] + input[indexOther] + input[indexAgain] == 2020) {
           return input[index] * input[indexOther] * input[indexAgain];
         }
