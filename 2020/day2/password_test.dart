@@ -4,10 +4,17 @@ import "passwords.dart";
 
 void main() {
   test("Basic", _testBasic);
+  test("Position", _testPosition);
 }
 
 void _testBasic() {
-  expect(isValid("1-3 a: abcde"), true);
-  expect(isValid("1-3 b: cdefg"), false);
-  expect(isValid("2-9 c: ccccccccc"), true);
+  expect(isCountValid("1-3 a: abcde"), true);
+  expect(isCountValid("1-3 b: cdefg"), false);
+  expect(isCountValid("2-9 c: ccccccccc"), true);
+}
+
+void _testPosition() {
+  expect(isPositionValid("1-3 a: abcde"), true);
+  expect(isPositionValid("1-3 b: cdefg"), false);
+  expect(isPositionValid("2-9 c: ccccccccc"), false);
 }

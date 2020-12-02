@@ -7,10 +7,18 @@ void main(List<String> args) {
 
   ArgResults argResults = parser.parse(args);
   List<String> inputStr = new File(argResults.rest[0]).readAsLinesSync();
-  stdout.writeln(inputStr.where(isValid).toList().length);
+  stdout.writeln(inputStr.where(isPositionValid).toList().length);
 }
 
-bool isValid(String input) {
+bool isCountValid(String input) {
+  return isValid(input, false);
+}
+
+bool isPositionValid(String input) {
+  return isValid(input, true);
+}
+
+bool isValid(String input, bool indexMode) {
   // Parse policy
   List<String> args = input.split(": ");
   String character = args[0].substring(args[0].length - 1);
@@ -22,6 +30,11 @@ bool isValid(String input) {
   // stdout.writeln("Policy: ${character} ${policy}");
 
   // Check password against policy.
-  int count = password.split("").where((test) => character == test).length;
-  return count >= policy[0] && count <= policy[1];
+  if (indexMode) {
+    return (password[policy[0] - 1] == character) ^
+        (password[policy[1] - 1] == character);
+  } else {
+    int count = password.split("").where((test) => character == test).length;
+    return count >= policy[0] && count <= policy[1];
+  }
 }
