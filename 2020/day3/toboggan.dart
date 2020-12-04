@@ -9,6 +9,13 @@ void main(List<String> args) {
   List<String> inputStr = new File(argResults.rest[0]).readAsLinesSync();
   Forest forest = new Forest(inputStr);
   stdout.writeln(forest.getTreeCount(3, 1));
+  stdout.writeln(forest.getMultiple([
+    [1, 1],
+    [3, 1],
+    [5, 1],
+    [7, 1],
+    [1, 2]
+  ]));
 }
 
 class Forest {
@@ -31,5 +38,11 @@ class Forest {
       currentX += xStride;
     }
     return treeCount;
+  }
+
+  int getMultiple(List<List<int>> inputSlopes) {
+    return inputSlopes
+        .map((element) => getTreeCount(element[0], element[1]))
+        .reduce((value, element) => value * element);
   }
 }

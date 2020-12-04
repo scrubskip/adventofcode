@@ -21,4 +21,15 @@ void _testAocInput() {
     ".#..#...#.#"
   ]);
   expect(forest.getTreeCount(3, 1), 7);
+
+  // Now do the other pairs.
+  expect(
+      forest.getMultiple([
+        [1, 1],
+        [3, 1],
+        [5, 1],
+        [7, 1],
+        [1, 2]
+      ]),
+      336);
 }
