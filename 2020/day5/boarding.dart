@@ -8,7 +8,7 @@ void main(List<String> args) {
   final parser = ArgParser();
 
   ArgResults argResults = parser.parse(args);
-  getMaxSeatId(new File(argResults.rest[0])
+  findMissingSeatId(new File(argResults.rest[0])
           .openRead()
           .transform(utf8.decoder)
           .transform(new LineSplitter()))
@@ -24,6 +24,30 @@ Future<int> getMaxSeatId(Stream<String> input) async {
     }
   }
   return maxSeatId;
+}
+
+Future<int> findMissingSeatId(Stream<String> input) async {
+  int maxSeatId = null;
+  int minSeatId = null;
+  Set<int> seenSeats = new Set();
+  await for (String seat in input) {
+    int seatId = getSeatId(seat);
+    if (maxSeatId == null || seatId >= maxSeatId) {
+      maxSeatId = seatId;
+    }
+    if (minSeatId == null || seatId <= minSeatId) {
+      minSeatId = seatId;
+    }
+    seenSeats.add(seatId);
+  }
+  for (int index = minSeatId + 1; index < maxSeatId - 1; index++) {
+    if (seenSeats.contains(index - 1) &&
+        seenSeats.contains(index + 1) &&
+        !seenSeats.contains(index)) {
+      return index;
+    }
+  }
+  return -1;
 }
 
 int getSeatId(String input) {
