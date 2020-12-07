@@ -25,6 +25,9 @@ void _testAocInput() {
     "b"
   ];
 
-  Stream<Set<String>> stream = getDeclarationStream(getListAsStream(data));
+  Stream<Map<String, int>> stream = getDeclarationStream(getListAsStream(data));
   getSum(stream).then((value) => expect(value, 11));
+
+  stream = getDeclarationStream(getListAsStream(data));
+  getUnanimousSum(stream).then((value) => expect(value, 6));
 }
