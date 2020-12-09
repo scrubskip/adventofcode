@@ -12,6 +12,7 @@ void main(List<String> args) {
           .transform(new LineSplitter()))
       .then((bags) {
     stdout.writeln(getOuterBags(bags, "shiny gold").length);
+    stdout.writeln(getChildBags(bags, "shiny gold"));
   });
 }
 
@@ -42,6 +43,7 @@ Future<Map<String, Bag>> getBags(Stream<String> rules) async {
             candidateBag = new Bag(name);
           }
           candidateBag.addParentBag(parentBag);
+          parentBag.setChildCount(name, int.parse(match[1]));
           bags[name] = candidateBag;
         }
       });
@@ -66,9 +68,23 @@ Set<String> getOuterBags(Map<String, Bag> bags, String name) {
   return outerBags;
 }
 
+int getChildBags(Map<String, Bag> bags, String name) {
+  if (bags[name].childBags.isNotEmpty) {
+    return bags[name]
+        .childBags
+        .entries
+        .map((entry) =>
+            entry.value + getChildBags(bags, entry.key) * entry.value)
+        .reduce((previous, element) => previous + element);
+  } else {
+    return 0;
+  }
+}
+
 class Bag {
   final String name;
   Map<String, Bag> parentBags = new Map();
+  Map<String, int> childBags = new Map();
 
   Bag(this.name);
 
@@ -76,5 +92,9 @@ class Bag {
     if (!parentBags.containsKey(parentBag.name)) {
       parentBags[parentBag.name] = parentBag;
     }
+  }
+
+  void setChildCount(String name, int count) {
+    childBags[name] = count;
   }
 }

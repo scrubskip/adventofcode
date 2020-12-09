@@ -4,6 +4,7 @@ import "bags.dart";
 
 void main() {
   test("aoc input", _testAocInput);
+  test("child count input", _testChildCount);
 }
 
 void _testAocInput() {
@@ -22,6 +23,23 @@ void _testAocInput() {
   getBags(getListAsStream(data)).then((bags) {
     expect(bags.length, 9);
     expect(getOuterBags(bags, "shiny gold").length, 4);
+    expect(getChildBags(bags, "shiny gold"), 32);
+  });
+}
+
+void _testChildCount() {
+  var data = [
+    "shiny gold bags contain 2 dark red bags.",
+    "dark red bags contain 2 dark orange bags.",
+    "dark orange bags contain 2 dark yellow bags.",
+    "dark yellow bags contain 2 dark green bags.",
+    "dark green bags contain 2 dark blue bags.",
+    "dark blue bags contain 2 dark violet bags.",
+    "dark violet bags contain no other bags."
+  ];
+  getBags(getListAsStream(data)).then((bags) {
+    expect(bags.length, 7);
+    expect(getChildBags(bags, "shiny gold"), 126);
   });
 }
 
