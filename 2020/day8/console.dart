@@ -8,7 +8,7 @@ void main(List<String> args) {
   ArgResults argResults = parser.parse(args);
   List<String> inputStr = new File(argResults.rest[0]).readAsLinesSync();
   List<Instruction> input = inputStr.map(Instruction.parse).toList();
-  stdout.writeln(findLoop(input));
+  stdout.writeln(fixProgram(input));
 }
 
 void runProgram(
@@ -49,6 +49,44 @@ int findLoop(List<Instruction> input) {
   return lastAccumulator;
 }
 
+int hasLoop(List<Instruction> input) {
+  Set<int> seenCounts = new Set();
+  int lastAccumulator = 0;
+  bool foundLoop = false;
+  runProgram(input, (counter, accumulator) {
+    lastAccumulator = accumulator;
+    if (seenCounts.contains(counter)) {
+      foundLoop = true;
+      return false;
+    }
+    seenCounts.add(counter);
+    return true;
+  });
+  if (foundLoop) {
+    return -1;
+  }
+  return lastAccumulator;
+}
+
+int fixProgram(List<Instruction> input) {
+  int alteredIndex = -1;
+  int lastAccumulator = -1;
+  while ((lastAccumulator = hasLoop(input)) == -1) {
+    // Reset the instruction
+    if (alteredIndex >= 0) {
+      input[alteredIndex].flip();
+    }
+    // Find the next input to flip
+    alteredIndex = input.indexWhere(Instruction.isFlippable, alteredIndex + 1);
+    if (alteredIndex != -1) {
+      input[alteredIndex].flip();
+    } else {
+      throw new Exception("No flipped index found");
+    }
+  }
+  return lastAccumulator;
+}
+
 class Instruction {
   String name;
   int value;
@@ -58,5 +96,17 @@ class Instruction {
   static Instruction parse(String input) {
     List<String> parts = input.split(" ");
     return Instruction(parts[0], int.parse(parts[1]));
+  }
+
+  static bool isFlippable(Instruction instruction) {
+    return instruction.name == "jmp" || instruction.name == "nop";
+  }
+
+  void flip() {
+    if (name == "jmp") {
+      name = "nop";
+    } else if (name == "nop") {
+      name = "jmp";
+    }
   }
 }
