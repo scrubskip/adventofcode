@@ -48,6 +48,7 @@ int findSmallLargeInContiguousRange(List<int> input, int sum) {
           .reduce((previous, element) => previous + element);
     }
   }
+  return -1;
 }
 
 List<int> findSmallestLargestInRange(
