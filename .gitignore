@@ -4,3 +4,4 @@
 *.lock
 *.packages
 *.dart_tool
+*.jar
