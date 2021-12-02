@@ -1,14 +1,15 @@
 import java.io.File
 
 fun main() {
-    // println(findIncreases(arrayOf(199, 200, 208, 210, 200, 207, 240, 269, 260, 263)))
+    // println(findIncreasesSlidingWindow(listOf(199, 200, 208, 210, 200, 207, 240, 269, 260, 263),
+    // 3))
     val lineList = mutableListOf<Int>()
 
     File("day1.txt").useLines { lines -> lines.forEach { lineList.add(it.toInt()) } }
-    println(findIncreases(lineList.toTypedArray()))
+    println(findIncreasesSlidingWindow(lineList, 3))
 }
 
-fun findIncreases(input: Array<Int>): Int {
+fun findIncreases(input: List<Int>): Int {
     var increases: Int = 0
     var prevValue: Int? = null
     for (value in input) {
@@ -16,6 +17,22 @@ fun findIncreases(input: Array<Int>): Int {
             increases++
         }
         prevValue = value
+    }
+    return increases
+}
+
+fun findIncreasesSlidingWindow(input: List<Int>, windowSize: Int): Int {
+    var increases: Int = 0
+    var index: Int = windowSize
+    var prevWindowValue: Int? = null
+    while (index <= input.size) {
+        var windowValue: Int = input.slice(index - windowSize..index - 1).sum()
+        // println("$index : $windowValue")
+        if (prevWindowValue != null && windowValue > prevWindowValue) {
+            increases++
+        }
+        prevWindowValue = windowValue
+        index++
     }
     return increases
 }
