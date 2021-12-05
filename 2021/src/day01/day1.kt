@@ -1,3 +1,5 @@
+package day01
+
 import java.io.File
 
 fun main() {
@@ -8,7 +10,7 @@ fun main() {
 
     val lineList = mutableListOf<Int>()
 
-    File("day1.txt").useLines { lines -> lines.forEach { lineList.add(it.toInt()) } }
+    File("src/day01","day1.txt").useLines { lines -> lines.forEach { lineList.add(it.toInt()) } }
     println(findIncreasesSlidingWindow(lineList, 3))
 }
 

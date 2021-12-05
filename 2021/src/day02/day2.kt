@@ -1,3 +1,5 @@
+package day02
+
 import java.io.File
 
 fun main() {
@@ -16,7 +18,7 @@ fun testSample(): Int {
 
 fun readFile(arg: String): Int {
     val lineList = mutableListOf<String>()
-    File(arg).useLines { lines -> lines.forEach { lineList.add(it.toString()) } }
+    File("src/day02", arg).useLines { lines -> lines.forEach { lineList.add(it.toString()) } }
     val (depth, distance) = moveSubWithAim(lineList)
     return depth * distance
 }

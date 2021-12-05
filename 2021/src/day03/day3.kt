@@ -1,3 +1,5 @@
+package day03
+
 import java.io.File
 import kotlin.collections.mutableMapOf
 
@@ -26,7 +28,7 @@ fun testDay3Sample() {
 }
 
 fun readInput(arg: String) {
-    printStats(File(arg).readLines())
+    printStats(File("src/day03", arg).readLines())
 }
 
 fun printStats(input: List<String>) {
