@@ -33,5 +33,11 @@ internal class Day5KtTest {
             ventMap.processLine(it.first, it.second)
         }
         assertEquals(5, ventMap.countPointsWithSize(2))
+
+        val ventMap2 = VentMap()
+        lines.forEach() {
+            ventMap2.processLine(it.first, it.second)
+        }
+        assertEquals(12, ventMap2.countPointsWithSize(2))
     }
 }

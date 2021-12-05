@@ -13,6 +13,12 @@ fun main() {
         ventMap.processLine(it.first, it.second)
     }
     println(ventMap.countPointsWithSize(2))
+
+    val ventMap2 = VentMap()
+    lines.forEach() {
+        ventMap2.processLine(it.first, it.second)
+    }
+    println(ventMap2.countPointsWithSize(2))
 }
 
 fun parseLine(lineStr : String) : Pair<Pair<Int, Int>, Pair<Int, Int>>? {
@@ -37,11 +43,24 @@ class VentMap() {
      * Processes a start and ending point, incrementing the coordinate count
      */
     fun processLine(start: Pair<Int, Int>, end : Pair<Int, Int>) {
+        val xDelta = end.first - start.first
+        val yDelta = end.second - start.second
 
-        for (i in min(start.first, end.first) .. max(start.first, end.first)) {
-            for (j in min(start.second, end.second) .. max(start.second, end.second)) {
-                coordinates[Pair(i, j)] = coordinates.getOrDefault(Pair(i,j), 0) + 1
-            }
+        var xStep : Int = 0
+        if (xDelta > 0) xStep = 1
+        if (xDelta < 0) xStep = -1
+
+        var yStep : Int = 0
+        if (yDelta > 0) yStep = 1
+        if (yDelta < 0) yStep = -1
+
+        var x = start.first
+        var y = start.second
+
+        while (x != end.first + xStep || y != end.second + yStep) {
+            coordinates[Pair(x,y)] = coordinates.getOrDefault(Pair(x,y), 0) + 1
+            x += xStep
+            y += yStep
         }
     }
 
