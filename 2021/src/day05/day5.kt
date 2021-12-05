@@ -2,8 +2,7 @@ package day05
 
 
 import java.io.File
-import java.lang.Integer.max
-import java.lang.Integer.min
+import kotlin.math.abs
 
 fun main() {
     val input = File("src/day05", "day5_input.txt").readLines()
@@ -46,13 +45,9 @@ class VentMap() {
         val xDelta = end.first - start.first
         val yDelta = end.second - start.second
 
-        var xStep : Int = 0
-        if (xDelta > 0) xStep = 1
-        if (xDelta < 0) xStep = -1
-
-        var yStep : Int = 0
-        if (yDelta > 0) yStep = 1
-        if (yDelta < 0) yStep = -1
+        // Horizontal, vertical or diagonal with slope 1 or -1
+        val xStep : Int = if (xDelta == 0) 0 else xDelta / abs(xDelta)
+        val yStep : Int = if (yDelta == 0) 0 else yDelta / abs(yDelta)
 
         var x = start.first
         var y = start.second
