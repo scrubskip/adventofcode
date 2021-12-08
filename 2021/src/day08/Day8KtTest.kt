@@ -31,5 +31,51 @@ internal class Day8KtTest {
             "gcafb gcf dcaebfg ecagb gf abcdeg gaef cafbge fdbac fegbdc | fgae cfgab fg bagce"
         )
         assertEquals(26, getUniqueSegments(input.map { parseLine(it) }.map { it.second }).size)
+
+        var digitMap = analyzeInput("acedgfb cdfbe gcdfa fbcad dab cefabd cdfgeb eafb cagedb ab".split(" "))
+        assertEquals(5353, parseOutput("cdfeb fcadb cdfeb cdbaf".split(" "), digitMap))
+
+        val outputSum = input.map { parseLine(it) }.sumOf {
+            val digitMap = analyzeInput(it.first)
+            println(parseOutput(it.second, digitMap))
+            parseOutput(it.second, digitMap)
+        }
+
+        assertEquals(61229, outputSum)
+    }
+
+    @Test
+    fun testCharFind() {
+        assertEquals(listOf('a'), findUniqueChars("abc", "bc"))
+        assertEquals(listOf('d'), findUniqueChars("dab", "ab"))
+        assertTrue(containsAll("abcd", "ab"))
+        assertFalse(containsAll("acd", "ab"))
+    }
+
+    @Test
+    fun testDigitMaker() {
+        val segmentMap: Map<Int, Char> = buildMap {
+            put(0, 'd')
+            put(1, 'e')
+            put(2, 'a')
+            put(3, 'f')
+            put(4, 'g')
+            put(5, 'b')
+            put(6, 'c')
+        }
+
+        val digitMap = makeDigitMapFromSegmentMap(segmentMap)
+
+        assertEquals(sortString("abcdeg"), sortString("cagedb"))
+        assertEquals(digitMap[sortString("cagedb")], 0)
+        assertEquals(digitMap[sortString("ab")], 1)
+    }
+
+    @Test
+    fun testSearch() {
+        val input = "acedgfb cdfbe gcdfa fbcad dab cefabd cdfgeb eafb cagedb ab".split(" ")
+
+        val segmentMap = analyzeInput(input)
+
     }
 }
