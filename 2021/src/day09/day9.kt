@@ -4,7 +4,12 @@ import java.io.File
 
 fun main() {
     val heightMap = parseData(File("src/day09", "day9input.txt").readLines())
-    println(getRiskFactor(heightMap.findLowPoints()))
+    println(getRiskFactor(heightMap.findLowPointHeights()))
+
+    val lowPoints = heightMap.findLowPoints()
+    val largest3 = lowPoints.map { heightMap.findBasinSize(it) }.sortedDescending().take(3)
+        .fold(1) { acc, value -> acc * value }
+    println(largest3)
 }
 
 fun parseData(input: List<String>): HeightMap {
@@ -17,14 +22,57 @@ fun getRiskFactor(input: List<Int>): Int {
 
 data class HeightMap(val heightData: Array<IntArray>) {
 
-
-    fun findLowPoints(): List<Int> {
+    fun findLowPointHeights(): List<Int> {
         return heightData.mapIndexed { rowIndex, ints ->
             val maxCol = ints.size - 1
             ints.filterIndexed { colIndex, height ->
                 isLowPoint(rowIndex, colIndex, height, maxCol)
             }
         }.flatMap { it.toList() }
+    }
+
+    fun findLowPoints(): List<Pair<Int, Int>> {
+        val lowPointCoords = mutableListOf<Pair<Int, Int>>()
+        heightData.forEachIndexed { rowIndex, ints ->
+            val maxCol = ints.size - 1
+            ints.forEachIndexed { colIndex, height ->
+                if (isLowPoint(rowIndex, colIndex, height, maxCol)) {
+                    lowPointCoords.add(Pair(rowIndex, colIndex))
+                }
+            }
+        }
+        return lowPointCoords
+    }
+
+    fun get(coordinate: Pair<Int, Int>): Int {
+        return heightData[coordinate.first][coordinate.second]
+    }
+
+    fun findBasinSize(start: Pair<Int, Int>): Int {
+        // flood fill looking for 9s
+        val seenLocations = mutableSetOf<Pair<Int, Int>>()
+
+        var candidateLocations = mutableListOf<Pair<Int, Int>>()
+        candidateLocations.add(start)
+        while (candidateLocations.size > 0) {
+            val candidate = candidateLocations.removeFirst()
+
+            if (get(candidate) == 9 || seenLocations.contains(candidate)) {
+                continue
+            }
+
+            seenLocations.add(candidate)
+            // add neighbors
+            val rowIndex = candidate.first
+            val colIndex = candidate.second
+
+            if (rowIndex > 0) candidateLocations.add(Pair(rowIndex - 1, colIndex))
+            if (colIndex > 0) candidateLocations.add(Pair(rowIndex, colIndex - 1))
+            if (rowIndex < heightData.size - 1) candidateLocations.add(Pair(rowIndex + 1, colIndex))
+            if (colIndex < heightData[rowIndex].size - 1) candidateLocations.add(Pair(rowIndex, colIndex + 1))
+        }
+
+        return seenLocations.size
     }
 
     fun isLowPoint(rowIndex: Int, colIndex: Int, height: Int, maxCol: Int): Boolean {

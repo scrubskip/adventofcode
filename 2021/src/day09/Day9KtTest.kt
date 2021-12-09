@@ -20,9 +20,15 @@ internal class Day9KtTest {
 
         assertArrayEquals(intArrayOf(2, 1, 9, 9, 9, 4, 3, 2, 1, 0), heightMap.heightData[0])
 
+        val lowPointHeights = heightMap.findLowPointHeights()
+        assertEquals(4, lowPointHeights.size)
+        assertEquals(15, getRiskFactor(lowPointHeights))
+
+
         val lowPoints = heightMap.findLowPoints()
-        assertEquals(4, lowPoints.size)
-        assertEquals(15, getRiskFactor(lowPoints))
+        val largest3 = lowPoints.map { heightMap.findBasinSize(it) }.sortedDescending().take(3)
+            .fold(1) { acc, value -> acc * value }
+        assertEquals(1134, largest3)
     }
 
 }
