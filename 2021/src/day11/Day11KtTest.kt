@@ -1,8 +1,6 @@
 package day11
 
-import kotlin.test.Test
-import kotlin.test.assertContentEquals
-import kotlin.test.assertEquals
+import kotlin.test.*
 
 
 internal class Day11KtTest {
@@ -39,6 +37,18 @@ internal class Day11KtTest {
     }
 
     @Test
+    fun testAllFlash() {
+        val input = listOf(
+            "000",
+            "001",
+            "000"
+        )
+        assertFalse(parseData(input).isAllFlash())
+
+        assertTrue(parseData(listOf("000", "000", "000")).isAllFlash())
+    }
+
+    @Test
     fun testExample() {
         val input = listOf(
             "5483143223",
@@ -61,5 +71,12 @@ internal class Day11KtTest {
             // println("$octoBoard\n")
         }
         assertEquals(1656, sumFlash)
+
+        var step = 100
+        while (!octoBoard.isAllFlash()) {
+            octoBoard.runStep()
+            step++
+        }
+        assertEquals(195, step)
     }
 }

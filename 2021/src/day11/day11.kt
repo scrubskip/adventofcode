@@ -6,11 +6,25 @@ import java.lang.Integer.min
 
 fun main() {
     val octoBoard = parseData(File("src/day11", "day11input.txt").readLines())
+
+    println(getAllFlashStep(octoBoard))
+}
+
+fun getFlashCount(octoBoard: OctoBoard, stepCount: Int): Int {
     var sumFlashes = 0
-    for (i in 1..100) {
+    for (i in 1..stepCount) {
         sumFlashes += octoBoard.runStep()
     }
-    println("$sumFlashes")
+    return sumFlashes
+}
+
+fun getAllFlashStep(octoBoard: OctoBoard): Int {
+    var step = 0
+    while (!octoBoard.isAllFlash()) {
+        octoBoard.runStep()
+        step++
+    }
+    return step
 }
 
 fun parseData(input: List<String>): OctoBoard {
@@ -71,6 +85,9 @@ data class OctoBoard(val boardData: Array<IntArray>) {
         }
     }
 
+    fun isAllFlash(): Boolean {
+        return boardData.all { row -> row.all { it == 0 } }
+    }
 
     override fun equals(other: Any?): Boolean {
         if (this === other) return true
