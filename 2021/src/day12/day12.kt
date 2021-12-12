@@ -7,7 +7,7 @@ fun main() {
     for (mapping in File("src/day12", "day12input.txt").readLines().map { it.split("-") }) {
         mapper.addMapping(mapping[0], mapping[1])
     }
-    val paths = mapper.getPaths()
+    val paths = mapper.getPaths(oneDupeAllowed = true)
     println("${paths.size}")
 }
 
@@ -28,16 +28,16 @@ class Mapper() {
         return pathMap.getOrDefault(parentId, listOf())
     }
 
-    fun getPaths(): List<List<String>> {
+    fun getPaths(oneDupeAllowed: Boolean = false): List<List<String>> {
         // Depth first search with ability to pop if going to a big node
         val paths = mutableListOf<List<String>>()
 
-        paths.addAll(getAllPaths("start", mutableListOf()))
+        paths.addAll(getAllPaths("start", mutableListOf(), oneDupeAllowed))
 
-        return paths
+        return paths.distinctBy { it.joinToString() }
     }
 
-    fun getAllPaths(id: String, currentPath: List<String>): List<List<String>> {
+    fun getAllPaths(id: String, currentPath: List<String>, oneDupeAllowed: Boolean = false): List<List<String>> {
         // For a given id current, iterate through the children
         val returnList = mutableListOf<List<String>>()
 
@@ -49,20 +49,18 @@ class Mapper() {
                 returnList.add(currentPath + id + connection)
             } else {
                 if (isBigNode(connection)) {
-                    returnList.addAll(getAllPaths(connection, currentPath + id))
-                } else if (!currentPath.contains(connection)) {
-                    // only add if the child wasn't in the list before
-                    returnList.addAll(getAllPaths(connection, currentPath + id))
-                }
-            }
-        }
-
-        // If this id is also a big node, add itself to the children list too
-        if (isBigNode(id)) {
-            for (child in getConnections(id)) {
-                if (!isEnd(child) && !isStart(child)) {
-                    if (isBigNode(child) || !currentPath.contains(child)) {
-                        // returnList.addAll(getAllPaths(id, currentPath + id + child))
+                    returnList.addAll(getAllPaths(connection, currentPath + id, oneDupeAllowed))
+                } else {
+                    var canAdd = !currentPath.contains(connection)
+                    var oneSave = false
+                    if (!canAdd && oneDupeAllowed) {
+                        // trying to add the first time
+                        oneSave = true
+                        canAdd = true
+                    }
+                    if (canAdd) {
+                        // only add if the child wasn't in the list before
+                        returnList.addAll(getAllPaths(connection, currentPath + id, oneDupeAllowed && !oneSave))
                     }
                 }
             }

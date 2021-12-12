@@ -29,6 +29,10 @@ internal class Day12KtTest {
 
         val paths = mapper.getPaths()
         assertEquals(10, paths.size)
+
+        val morePaths = mapper.getPaths(oneDupeAllowed = true)
+        println(morePaths.joinToString(separator = "\n"))
+        assertEquals(36, morePaths.size)
     }
 
     @Test
@@ -53,6 +57,10 @@ internal class Day12KtTest {
         }
         val paths = mapper.getPaths()
         assertEquals(19, paths.size)
+
+        val morePaths = mapper.getPaths(oneDupeAllowed = true).sortedBy { it.size }
+        println(morePaths.joinToString(separator = "\n"))
+        assertEquals(103, morePaths.size)
     }
 
     @Test
@@ -85,5 +93,8 @@ internal class Day12KtTest {
         }
         val paths = mapper.getPaths()
         assertEquals(226, paths.size)
+
+        val morePaths = mapper.getPaths(oneDupeAllowed = true)
+        assertEquals(3509, morePaths.size)
     }
 }
