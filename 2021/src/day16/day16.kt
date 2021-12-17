@@ -6,6 +6,7 @@ fun main() {
     val input = File("src/day16", "day16input.txt").readLines().first()
     val packet = parsePacket(input)
     println(packet.getVersionSum())
+    println(packet.getValue())
 }
 
 fun String.toBinaryString(): String {
@@ -19,8 +20,8 @@ fun String.fromBinary(): Int {
     return this.toInt(2)
 }
 
-fun String.fromBinaryLong(): ULong {
-    return this.toULong(2)
+fun String.fromBinaryLong(): Long {
+    return this.toLong(2)
 }
 
 fun parsePacket(hexString: String): Packet {
@@ -75,7 +76,7 @@ fun parsePacketWithChildren(binaryString: String, startIndex: Int): Pair<Packet,
 class Packet(val versionCode: Int, val typeId: Int) : Collection<Packet> {
     private val childPackets = mutableListOf<Packet>()
 
-    private var number: ULong = 0u
+    private var number: Long = 0L
 
     private var lengthTypeId: Int = 0
 
@@ -87,13 +88,27 @@ class Packet(val versionCode: Int, val typeId: Int) : Collection<Packet> {
         return typeId == 4
     }
 
-    fun setNumber(newNumber: ULong) {
+    fun setNumber(newNumber: Long) {
         require(isLiteral())
         number = newNumber
     }
 
-    fun getNumber(): ULong {
+    fun getNumber(): Long {
         return number
+    }
+
+    fun getValue(): Long {
+        return when (typeId) {
+            0 -> sumOf { it.getValue() }
+            1 -> fold(1) { acc, packet -> acc * packet.getValue() }
+            2 -> minOf { it.getValue() }
+            3 -> maxOf { it.getValue() }
+            4 -> number
+            5 -> if (get(0).getValue() > get(1).getValue()) 1 else 0
+            6 -> if (get(0).getValue() < get(1).getValue()) 1 else 0
+            7 -> if (get(0).getValue() == get(1).getValue()) 1 else 0
+            else -> throw Exception("Unknown type id $typeId")
+        }
     }
 
     fun setLengthTypeId(value: Int) {

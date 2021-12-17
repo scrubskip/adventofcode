@@ -64,4 +64,32 @@ internal class Day16KtTest {
             assertEquals(31, getVersionSum())
         }
     }
+
+    @Test
+    fun testOperators() {
+        with(parsePacket("C200B40A82")) {
+            assertEquals(3, getValue())
+        }
+        with(parsePacket("04005AC33890")) {
+            assertEquals(54, getValue())
+        }
+        with(parsePacket("880086C3E88112")) {
+            assertEquals(7, getValue())
+        }
+        with(parsePacket("CE00C43D881120")) {
+            assertEquals(9, getValue())
+        }
+        with(parsePacket("D8005AC2A8F0")) {
+            assertEquals(1, getValue())
+        }
+        with(parsePacket("F600BC2D8F")) {
+            assertEquals(0, getValue())
+        }
+        with(parsePacket("9C005AC2F8F0")) {
+            assertEquals(0, getValue())
+        }
+        with(parsePacket("9C0141080250320F1802104A08")) {
+            assertEquals(1, getValue())
+        }
+    }
 }
