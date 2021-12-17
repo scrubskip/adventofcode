@@ -1,7 +1,11 @@
 package day16
 
-fun main() {
+import java.io.File
 
+fun main() {
+    val input = File("src/day16", "day16input.txt").readLines().first()
+    val packet = parsePacket(input)
+    println(packet.getVersionSum())
 }
 
 fun String.toBinaryString(): String {
@@ -13,6 +17,10 @@ fun String.toBinaryString(): String {
 
 fun String.fromBinary(): Int {
     return this.toInt(2)
+}
+
+fun String.fromBinaryLong(): ULong {
+    return this.toULong(2)
 }
 
 fun parsePacket(hexString: String): Packet {
@@ -42,35 +50,32 @@ fun parsePacketWithChildren(binaryString: String, startIndex: Int): Pair<Packet,
             index += 5
         }
         index += 5
-        packet.setNumber(numberList.joinToString(separator = "", postfix = "").fromBinary())
+        packet.setNumber(numberList.joinToString(separator = "", postfix = "").fromBinaryLong())
 
     } else {
         // set the length type id
         packet.setLengthTypeId(binaryString.substring(index, index + 1).fromBinary())
         index += 1
-        val length = when (packet.getLengthTypeId()) {
-            0 -> 15
-            1 -> 11
-            else -> throw Exception("Not valid length packet")
-        }
+        val length = if (packet.getLengthTypeId() == 0) 15 else 11
         val lengthPackets = binaryString.substring(index, index + length).fromBinary()
         index += length
-        val endIndex = index + lengthPackets
-        while (index < endIndex) {
+        val endIndex = if (packet.getLengthTypeId() == 0) index + lengthPackets else lengthPackets
+        var counter = if (packet.getLengthTypeId() == 0) index else 0
+        while (counter < endIndex) {
             with(parsePacketWithChildren(binaryString, index)) {
                 packet.addPacket(first)
                 index = second
+                counter = if (packet.getLengthTypeId() == 0) index else counter + 1
             }
         }
     }
-
     return Pair(packet, index)
 }
 
-class Packet(val versionCode: Int, val typeId: Int) {
+class Packet(val versionCode: Int, val typeId: Int) : Collection<Packet> {
     private val childPackets = mutableListOf<Packet>()
 
-    private var number: Int = 0
+    private var number: ULong = 0u
 
     private var lengthTypeId: Int = 0
 
@@ -78,20 +83,16 @@ class Packet(val versionCode: Int, val typeId: Int) {
         childPackets.add(packet)
     }
 
-    fun getPackets(): List<Packet> {
-        return childPackets.toList()
-    }
-
     fun isLiteral(): Boolean {
         return typeId == 4
     }
 
-    fun setNumber(newNumber: Int) {
+    fun setNumber(newNumber: ULong) {
         require(isLiteral())
         number = newNumber
     }
 
-    fun getNumber(): Int {
+    fun getNumber(): ULong {
         return number
     }
 
@@ -101,5 +102,32 @@ class Packet(val versionCode: Int, val typeId: Int) {
 
     fun getLengthTypeId(): Int {
         return lengthTypeId
+    }
+
+    fun getVersionSum(): Int {
+        return versionCode + childPackets.sumOf { it.getVersionSum() }
+    }
+
+    override val size: Int
+        get() = childPackets.size
+
+    override fun contains(element: Packet): Boolean {
+        return childPackets.contains(element)
+    }
+
+    override fun containsAll(elements: Collection<Packet>): Boolean {
+        return childPackets.containsAll(elements)
+    }
+
+    override fun isEmpty(): Boolean {
+        return childPackets.isEmpty()
+    }
+
+    override fun iterator(): Iterator<Packet> {
+        return childPackets.iterator()
+    }
+
+    operator fun get(index: Int): Packet {
+        return childPackets[index]
     }
 }
