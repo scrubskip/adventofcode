@@ -114,6 +114,7 @@ internal class SnailfishParserTest {
         ).map { Snailfish.parseFish(it) }
         val sum = input.reduce { acc: Snailfish, snailfish: Snailfish -> acc + snailfish }
         assertEquals(4140, sum.getMagnitude())
+        assertEquals(3993, findGreatestMagnitudePair(input))
     }
 }
 

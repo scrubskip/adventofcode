@@ -7,7 +7,23 @@ fun main() {
     val input = File("src/day18", "day18input.txt").readLines().map { Snailfish.parseFish(it) }
     val sum = input.reduce { acc: Snailfish, snailfish: Snailfish -> acc + snailfish }
     println(sum.getMagnitude())
+    println(findGreatestMagnitudePair(input))
+}
 
+fun findGreatestMagnitudePair(input: List<Snailfish>): Long {
+    var greatestMag: Long = 0
+    for (fish in input) {
+        for (otherFish in input) {
+            if (fish != otherFish) {
+                val mag = (fish + otherFish).getMagnitude()
+                if (mag > greatestMag) {
+                    // println("found max $fish $otherFish $mag")
+                    greatestMag = mag
+                }
+            }
+        }
+    }
+    return greatestMag
 }
 
 open class Snailfish() {
@@ -21,10 +37,10 @@ open class Snailfish() {
 
     operator fun plus(other: Snailfish): Snailfish {
         val newFish = Snailfish()
-        newFish.left = this
-        this.parent = newFish
-        newFish.right = other
-        other.parent = newFish
+        newFish.left = this.copy()
+        newFish.left?.parent = newFish
+        newFish.right = other.copy()
+        newFish.right?.parent = newFish
 
         newFish.reduce()
 
@@ -172,6 +188,10 @@ open class Snailfish() {
 
     open fun getMagnitude(): Long {
         return (left?.getMagnitude() ?: 0).times(3) + (right?.getMagnitude() ?: 0).times(2)
+    }
+
+    private fun copy(): Snailfish {
+        return parseFish(toString())
     }
 
     companion object {
