@@ -3,7 +3,9 @@ package day02
 import java.io.File
 
 fun main() {
-    println(File("src/day02/day2input.txt").readLines().sumOf { calculateScore(it) })
+    val input = File("src/day02/day2input.txt").readLines()
+    println(input.sumOf { calculateScore(it) })
+    println(input.sumOf { calculateSecretScore(it) })
 }
 
 fun getWinTable(): Map<String, Int> {
@@ -20,6 +22,20 @@ fun getWinTable(): Map<String, Int> {
     )
 }
 
+fun getMatchTable(): Map<String, String> {
+    return mapOf(
+        "A X" to "Z",
+        "A Y" to "X",
+        "A Z" to "Y",
+        "B X" to "X",
+        "B Y" to "Y",
+        "B Z" to "Z",
+        "C X" to "Y",
+        "C Y" to "Z",
+        "C Z" to "X"
+    )
+}
+
 /**
  * Parses "[A,B,C] [X, Y, Z]" into a pair
  */
@@ -30,6 +46,16 @@ fun parseMatch(input: String): Pair<String, String> {
 
 fun calculateScore(match: String): Int {
     val (opponent, player) = parseMatch(match)
+    return calculatePlayerScore(match, player)
+}
+
+fun calculateSecretScore(match: String): Int {
+    val (opponent, outcome) = parseMatch(match)
+    val player = getMatchTable().getOrDefault(match, "")
+    return calculatePlayerScore("$opponent $player", player);
+}
+
+fun calculatePlayerScore(match: String, player: String): Int {
     val playScore = when (player) {
         "X" -> 1
         "Y" -> 2
