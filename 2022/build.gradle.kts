@@ -5,6 +5,12 @@ plugins {
 repositories {
     mavenCentral()
 }
+dependencies {
+    implementation("org.junit.jupiter:junit-jupiter:5.9.0")
+    // Other dependencies.
+    testImplementation(kotlin("test"))
+    implementation(kotlin("test-junit"))
+}
 
 tasks {
     sourceSets {

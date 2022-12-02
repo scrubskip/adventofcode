@@ -1,21 +1,38 @@
 package day01
 
-import readInput
+import java.io.File
 
 fun main() {
-    fun part1(input: List<String>): Int {
-        return input.size
+    val input = File("src/day01/Day01.txt").readLines()
+    val list = getCalorieCounts(input).sortedDescending();
+    println("Max calories = ${list.first()}")
+    println("Max calories with backup = ${getMaxWithBackup(list)}")
+}
+
+/**
+ * {@return} sum of top 3 items (assuming sorted descending)
+ */
+fun getMaxWithBackup(input : List<Int>) : Int {
+    return input.take(3).sum()
+}
+
+/**
+ * {@return} sorted descending list of calorie counts
+ */
+fun getCalorieCounts(input : List<String>) : List<Int> {
+    var returnList =  mutableListOf<Int>()
+    var currentValue = 0
+    input.forEach {
+        val cal = it.toIntOrNull()
+        if (cal != null) {
+            currentValue += cal
+        } else {
+            returnList.add(currentValue)
+            currentValue = 0
+        }
     }
 
-    fun part2(input: List<String>): Int {
-        return input.size
-    }
+    returnList.add(currentValue)
 
-    // test if implementation meets criteria from the description, like:
-    val testInput = readInput("day01/Day01_test")
-    check(part1(testInput) == 1)
-
-    val input = readInput("day01/Day01")
-    println(part1(input))
-    println(part2(input))
+    return returnList.sortedDescending()
 }
