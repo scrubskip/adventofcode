@@ -22,8 +22,8 @@ fun parseSchedule(input: String): Pair<IntRange, IntRange> {
 }
 
 fun isTotalOverlapping(schedule: Pair<IntRange, IntRange>): Boolean {
-    return (schedule.first.first <= schedule.second.first && schedule.first.last >= schedule.second.last) ||
-            (schedule.second.first <= schedule.first.first && schedule.second.last >= schedule.first.last)
+    return schedule.first.contains(schedule.second.first) && schedule.first.contains(schedule.second.last) ||
+            schedule.second.contains(schedule.first.first) && schedule.second.contains(schedule.first.last)
 }
 
 fun isAnyOverlapping(schedule: Pair<IntRange, IntRange>): Boolean {
