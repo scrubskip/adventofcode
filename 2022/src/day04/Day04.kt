@@ -6,7 +6,8 @@ fun main() {
 
     val input = File("src/day04/day04input.txt").readLines()
 
-    println(input.filter { isOverlapping(parseSchedule(it)) }.size)
+    println(input.filter { isTotalOverlapping(parseSchedule(it)) }.size)
+    println(input.filter { isAnyOverlapping(parseSchedule(it)) }.size)
 }
 
 val RANGE_REGEX: Regex = "(\\d+)-(\\d+),(\\d+)-(\\d+)".toRegex()
@@ -20,7 +21,14 @@ fun parseSchedule(input: String): Pair<IntRange, IntRange> {
     }
 }
 
-fun isOverlapping(schedule: Pair<IntRange, IntRange>): Boolean {
+fun isTotalOverlapping(schedule: Pair<IntRange, IntRange>): Boolean {
     return (schedule.first.first <= schedule.second.first && schedule.first.last >= schedule.second.last) ||
             (schedule.second.first <= schedule.first.first && schedule.second.last >= schedule.first.last)
+}
+
+fun isAnyOverlapping(schedule: Pair<IntRange, IntRange>): Boolean {
+    return schedule.first.contains(schedule.second.first) ||
+            schedule.first.contains(schedule.second.last) ||
+            schedule.second.contains(schedule.first.first) ||
+            schedule.second.contains(schedule.first.last)
 }

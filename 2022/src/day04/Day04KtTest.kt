@@ -17,9 +17,19 @@ internal class Day04KtTest {
     }
 
     @Test
-    fun testOverlap() {
-        assertFalse(isOverlapping(parseSchedule("2-4,6-8")))
-        assertTrue(isOverlapping(parseSchedule("2-8,3-7")))
-        assertTrue(isOverlapping(parseSchedule("6-6,4-6")))
+    fun testFullOverlap() {
+        assertFalse(isTotalOverlapping(parseSchedule("2-4,6-8")))
+        assertTrue(isTotalOverlapping(parseSchedule("2-8,3-7")))
+        assertTrue(isTotalOverlapping(parseSchedule("6-6,4-6")))
+    }
+
+    @Test
+    fun testAnyOverlap() {
+        assertFalse(isAnyOverlapping(parseSchedule("2-4,6-8")))
+        assertFalse(isAnyOverlapping(parseSchedule("2-3,4-5")))
+        assertTrue(isAnyOverlapping(parseSchedule("5-7,7-9")))
+        assertTrue(isAnyOverlapping(parseSchedule("2-8,3-7")))
+        assertTrue(isAnyOverlapping(parseSchedule("6-6,4-6")))
+        assertTrue(isAnyOverlapping(parseSchedule("2-6,4-8")))
     }
 }
