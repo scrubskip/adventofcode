@@ -5,7 +5,7 @@ import kotlin.test.assertEquals
 
 internal class CratesTest {
     @Test
-    fun testConstructor() {
+    fun testDefault() {
         val input = listOf(
             "ZN",
             "MCD",
@@ -24,5 +24,27 @@ internal class CratesTest {
             crates.moveFromArg(it)
         }
         assertEquals("CMZ", crates.getMessage())
+    }
+
+    @Test
+    fun testPart2() {
+        val input = listOf(
+            "ZN",
+            "MCD",
+            "P"
+        )
+        val crates = Crates(input, true)
+        assertEquals("NDP", crates.getMessage())
+
+        val moves = listOf(
+            "move 1 from 2 to 1",
+            "move 3 from 1 to 3",
+            "move 2 from 2 to 1",
+            "move 1 from 1 to 2"
+        )
+        moves.forEach {
+            crates.moveFromArg(it)
+        }
+        assertEquals("MCD", crates.getMessage())
     }
 }
