@@ -39,5 +39,9 @@ internal class Day07KtTest {
         assertNotNull(node)
         println(node.toString(0))
         assertEquals(95437, getSumDirectoriesAtMost(node as FolderNode, 100000))
+
+        val candidateNode = getCandidateDir(node as FolderNode, 70000000, 30000000)
+        assertNotNull(candidateNode)
+        assertEquals(24933642, candidateNode.getSize())
     }
 }

@@ -8,6 +8,7 @@ fun main() {
     parser.processCommands()
     val node = parser.getRootNode()
     println(getSumDirectoriesAtMost(node as FolderNode, 100000))
+    println(getCandidateDir(node as FolderNode, 70000000, 30000000)!!.getSize())
 }
 
 class FileSystemParser {
@@ -94,6 +95,23 @@ fun getSumDirectoriesAtMost(node: FolderNode, limit: Int): Int {
         nodes.addAll(currentNode.getFolderChildren())
     }
     return foundNodes.sumOf { it.getSize() }
+}
+
+fun getDirectoriesBySize(node: FolderNode): List<FolderNode> {
+    val nodes = mutableListOf(node)
+    val returnNodes = mutableListOf<FolderNode>()
+    while (nodes.isNotEmpty()) {
+        val currentNode = nodes.removeFirst()
+        returnNodes.add(currentNode)
+        nodes.addAll(currentNode.getFolderChildren())
+    }
+    return returnNodes.sortedBy { it.getSize() }
+}
+
+fun getCandidateDir(root: FolderNode, maxSize: Int, updateSize: Int): FolderNode? {
+    val requiredSize = root.getSize() - (maxSize - updateSize)
+    val nodes = getDirectoriesBySize(root)
+    return nodes.find { it.getSize() >= requiredSize }
 }
 
 abstract class Node {
