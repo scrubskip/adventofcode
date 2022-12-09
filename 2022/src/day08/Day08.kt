@@ -6,6 +6,7 @@ fun main() {
     val input = File("src/day08/day08input.txt").readLines()
     val grid = TreeGrid(input)
     println(grid.getVisibleCells().size)
+    println(grid.getMaxScenicScore())
 }
 
 typealias Cell = Pair<Int, Int>
@@ -67,6 +68,43 @@ class TreeGrid {
             }
             currentCell = candidateCell
         }
+    }
+
+    fun getMaxScenicScore(): Int {
+        var maxScore = 0
+        for (x in 0 until _width) {
+            for (y in 0 until _height) {
+                val scenicScore = getScenicScore(Cell(x, y))
+                if (scenicScore > maxScore) {
+                    maxScore = scenicScore
+                }
+            }
+        }
+        return maxScore
+    }
+
+    fun getScenicScore(cellStart: Cell): Int {
+        val topTrees = getViewDistance(cellStart, 0, -1)
+        val leftTrees = getViewDistance(cellStart, -1, 0)
+        val rightTrees = getViewDistance(cellStart, 1, 0)
+        val bottomTrees = getViewDistance(cellStart, 0, 1)
+
+        return topTrees * bottomTrees * rightTrees * leftTrees
+    }
+
+    private fun getViewDistance(cellStart: Cell, deltaX: Int, deltaY: Int): Int {
+        val value = getValue(cellStart)
+        var treeCount = 0
+        var candidateCell = Cell(cellStart.first + deltaX, cellStart.second + deltaY)
+        while (inbounds(candidateCell)) {
+            treeCount++
+            if (getValue(candidateCell) >= value) {
+                break
+            } else {
+                candidateCell = Cell(candidateCell.first + deltaX, candidateCell.second + deltaY)
+            }
+        }
+        return treeCount
     }
 
     private fun inbounds(cell: Cell): Boolean {

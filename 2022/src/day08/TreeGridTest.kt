@@ -20,7 +20,12 @@ internal class TreeGridTest {
         assertEquals(3, grid.getValue(Cell(0, 0)))
         assertEquals(0, grid.getValue(Cell(1, 0)))
         assertEquals(2, grid.getValue(Cell(0, 1)))
-        
+
         assertEquals(21, grid.getVisibleCells().size)
+
+        assertEquals(4, grid.getScenicScore(Cell(2, 1)))
+        assertEquals(8, grid.getScenicScore(Cell(2, 3)))
+
+        assertEquals(8, grid.getMaxScenicScore())
     }
 }
