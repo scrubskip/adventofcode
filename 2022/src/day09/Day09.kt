@@ -5,62 +5,77 @@ import kotlin.math.absoluteValue
 
 fun main() {
     val input = File("src/day09/day09input.txt").readLines()
-    val rope = Rope()
+    val rope = Rope(2)
     rope.processInput(input)
     println(rope.getVisitedCount())
 
+    val longRope = Rope(10)
+    longRope.processInput(input)
+    println(longRope.getVisitedCount())
 }
 
 typealias Cell = Pair<Int, Int>
 
 class Rope {
-    private var _headPosition: Cell = Cell(0, 0)
-    private var _tailPosition: Cell = Cell(0, 0)
+    private val _segments: MutableList<Cell>
+    private val _seenPositions = mutableSetOf(Cell(0, 0))
 
-    private val _tailPositions = mutableSetOf(_tailPosition)
+    constructor(segmentCount: Int) {
+        _segments = MutableList(segmentCount) { Cell(0, 0) }
+    }
 
     fun processInput(input: List<String>) {
         for (s in input) {
             val (direction, count) = s.split(" ")
-            moveHead(direction, count.toInt())
+            move(direction, count.toInt())
         }
     }
 
-    fun moveHead(direction: String, count: Int) {
+    fun move(direction: String, count: Int) {
         val deltaX = when (direction) {
             "L" -> -1
             "R" -> 1
             else -> 0
         }
         val deltaY = when (direction) {
-            "U" -> -1
-            "D" -> 1
+            "U" -> 1
+            "D" -> -1
             else -> 0
         }
         (0 until count).forEach { _ ->
-            // Adjust the head position
-            _headPosition = Cell(_headPosition.first + deltaX, _headPosition.second + deltaY)
-            // Check the tail: if it's too far away, adjust it
-            val gapX = _tailPosition.first - _headPosition.first
-            val gapY = _tailPosition.second - _headPosition.second
-            if (gapX.absoluteValue > 1 || gapY.absoluteValue > 1
-            ) {
-                // Move the tail
-                _tailPosition = when (direction) {
-                    "L" -> Cell(_headPosition.first + 1, _headPosition.second)
-                    "R" -> Cell(_headPosition.first - 1, _headPosition.second)
-                    "U" -> Cell(_headPosition.first, _headPosition.second + 1)
-                    "D" -> Cell(_headPosition.first, _headPosition.second - 1)
-                    else -> throw Exception("invalid direction")
-                }
+            _segments[0] = Cell(_segments[0].first + deltaX, _segments[0].second + deltaY)
+            for (index in 0.._segments.size - 2) {
+                moveSegmentIfNecessary(_segments[index], _segments[index + 1], index + 1)
             }
-            // Mark the tail
-            _tailPositions.add(_tailPosition)
+        }
+    }
+
+    private fun moveSegmentIfNecessary(segment: Cell, nextSegment: Cell, index: Int) {
+        val gapX = nextSegment.first - segment.first
+        val gapY = nextSegment.second - segment.second
+        if (gapX.absoluteValue > 1 || gapY.absoluteValue > 1) {
+            // Move the next segment
+            if (gapX == 0 || gapY.absoluteValue > gapX.absoluteValue) {
+                // We are on the same X or should be on the same X
+                _segments[index] = Cell(segment.first, segment.second + (if (gapY > 0) 1 else -1))
+            } else if (gapY == 0 || gapX.absoluteValue > gapY.absoluteValue) {
+                // We are on the same Y or should be on the same Y
+                _segments[index] = Cell(segment.first + (if (gapX > 0) 1 else -1), segment.second)
+            } else {
+                // We are diagonal and have to move diagonal towards
+                _segments[index] =
+                    Cell(segment.first + (if (gapX > 0) 1 else -1), segment.second + (if (gapY > 0) 1 else -1))
+            }
+        }
+        if (index == _segments.size - 1) {
+            _seenPositions.add(_segments[index])
         }
     }
 
     fun getVisitedCount(): Int {
-        return _tailPositions.size
+        // println(_seenPositions)
+        return _seenPositions.size
     }
+
 
 }
