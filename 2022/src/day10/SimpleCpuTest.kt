@@ -24,4 +24,13 @@ internal class SimpleCpuTest {
         cpu.executeProgram(input)
         assertEquals(13140, cpu.getAccumulatedSignalStrength())
     }
+
+    @Test
+    fun testLargerSampleWithDisplay() {
+        val input = File("src/day10/day10sample.txt").readLines()
+        val display = Display()
+        val cpu = SimpleCpu(display)
+        cpu.executeProgram(input)
+        display.printDisplay()
+    }
 }
