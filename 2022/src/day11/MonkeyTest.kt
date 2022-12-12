@@ -6,6 +6,33 @@ import kotlin.test.assertEquals
 internal class MonkeyTest {
     @Test
     fun testSample() {
+        val monkeyHolder = getMonkeyHolder()
+
+        repeat(20) {
+            monkeyHolder.runRound()
+            monkeyHolder.printState()
+        }
+
+        assertEquals(10605, monkeyHolder.getMonkeyBusiness())
+    }
+
+    @Test
+    fun testSample2() {
+        val monkeyHolder = getMonkeyHolder()
+
+        repeat(10000) {
+            if (it == 20 || it == 100 || it % 1000 == 0) {
+                println("Round $it : ${monkeyHolder.getInspectionCounts()}")
+            }
+            monkeyHolder.runRound(worryOn = false)
+        }
+
+        println(monkeyHolder.getInspectionCounts())
+
+        assertEquals(2713310158, monkeyHolder.getMonkeyBusiness())
+    }
+
+    private fun getMonkeyHolder(): MonkeyHolder {
         val monkeyHolder = MonkeyHolder()
 
         monkeyHolder.addMonkey(
@@ -52,13 +79,8 @@ internal class MonkeyTest {
                 monkeyHolder::passItem
             )
         )
-
-        repeat(20) {
-            monkeyHolder.runRound()
-            monkeyHolder.printState()
-        }
-
-        assertEquals(10605, monkeyHolder.getMonkeyBusiness())
-
+        return monkeyHolder
     }
+
+
 }
