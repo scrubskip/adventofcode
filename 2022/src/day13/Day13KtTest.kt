@@ -68,4 +68,16 @@ internal class Day13KtTest {
     fun testSample() {
         assertEquals(13, runFileInput("src/day13/day13sample.txt"))
     }
+
+    @Test
+    fun testSort() {
+        val input = mutableListOf<String>()
+        input.addAll(File("src/day13/day13sample.txt").readLines())
+        input.add("[[2]]")
+        input.add("[[6]]")
+        val sortedList = input.filter {it.isNotBlank()}.map{parseInput(it)}.sortedWith{left, right -> compareLists(left, right)}
+        val indexLow = sortedList.indexOf( listOf(listOf(2))) + 1
+        val indexHigh = sortedList.indexOf( listOf(listOf(6))) + 1
+        assertEquals(140, indexLow * indexHigh)
+    }
 }
