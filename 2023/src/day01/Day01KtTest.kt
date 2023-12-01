@@ -19,4 +19,27 @@ internal class Day01KtTest {
         assertEquals(77, output[3])
         assertEquals(142, output.sum())
     }
+
+    @Test
+    fun testAdjustment() {
+        val input = listOf(
+            "two1nine",
+            "eightwothree",
+            "abcone2threexyz",
+            "xtwone3four",
+            "4nineeightseven2",
+            "zoneight234",
+            "7pqrstsixteen"
+        )
+        val output = input.map { getCalibration(getAdjustedString(it)) }
+        assertEquals(29, output[0])
+        assertEquals(83, output[1])
+        assertEquals(13, output[2])
+        assertEquals(24, output[3])
+        assertEquals(42, output[4])
+        assertEquals(14, output[5])
+        assertEquals(76, output[6])
+        assertEquals(281, output.sum())
+
+    }
 }
