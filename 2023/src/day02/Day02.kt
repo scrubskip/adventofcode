@@ -13,6 +13,7 @@ fun main() {
     )
 
     println(games.filter { it.isValidGame(colorMap) }.sumOf { it.id })
+    println(games.sumOf { it.getPower() })
 }
 
 class Game {
@@ -47,5 +48,9 @@ class Game {
 
     fun getMaxSeen(color: String): Int {
         return maxSeen.getOrDefault(color, 0)
+    }
+
+    fun getPower(): Int {
+        return maxSeen.values.reduce { acc: Int, i: Int -> acc * i }
     }
 }
