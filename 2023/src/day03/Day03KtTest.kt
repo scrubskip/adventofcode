@@ -47,4 +47,26 @@ class Day03KtTest {
         // println("${schematic.getPartNumbers()}")
         assertEquals(4361, schematic.getPartNumbers().sum())
     }
+
+    @Test
+    fun testGearRatios() {
+        val input = listOf(
+            "467..114..",
+            "...*......",
+            "..35..633.",
+            "......#...",
+            "617*......",
+            ".....+.58.",
+            "..592.....",
+            "......755.",
+            "...$.*....",
+            ".664.598.."
+        )
+        val schematic = Schematic(input)
+        val gearRatios = schematic.getGearRatios()
+        assertEquals(2, gearRatios.size)
+        assertEquals(16345, gearRatios[0])
+        assertEquals(451490, gearRatios[1])
+        assertEquals(467835, gearRatios.sum())
+    }
 }
