@@ -1,5 +1,12 @@
 package day05
 
+import kotlinx.coroutines.Deferred
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.async
+import kotlinx.coroutines.awaitAll
+import kotlinx.coroutines.coroutineScope
+import kotlinx.coroutines.runBlocking
+import kotlinx.coroutines.withContext
 import java.io.File
 
 fun main() {
@@ -7,7 +14,9 @@ fun main() {
     val almanac = Almanac(input)
 
     println(almanac.getSeedValues().minOf { it })
-    println(almanac.getMinLocationNumberForSeedRange())
+    runBlocking {
+        println(almanac.getMinLocationNumberForSeedRange())
+    }
 }
 
 class Almanac(input: List<String>) {
@@ -52,13 +61,30 @@ class Almanac(input: List<String>) {
     /**
      * Process the seed values as if they are ranges, not individual
      */
-    fun getMinLocationNumberForSeedRange(): Long {
+    suspend fun getMinLocationNumberForSeedRange(): Long {
         var currentSeed: Long? = null
 
+        println("Starting chunks")
 
-        seeds.chunked(2).forEach {
-            println("Processing ${it[0]}")
-            for (seed in it[0]..it[0] + it[1]) {
+        currentSeed = coroutineScope {
+            val deferred = mutableListOf<Deferred<Long>>()
+            seeds.chunked(2).forEach {
+                deferred.add(async {
+                    return@async getLowestSeedValue(it[0], it[1])
+                })
+            }
+            println("Waiting chunks")
+            return@coroutineScope deferred.awaitAll().min()
+        }
+
+        return currentSeed!!
+    }
+
+    private suspend fun getLowestSeedValue(start: Long, end: Long): Long {
+        var currentSeed: Long? = null
+        withContext(Dispatchers.Default) {
+            println("Processing $start")
+            for (seed in start..start + end) {
                 val seedValue = getMappedValue(seed)
                 if (currentSeed == null || seedValue < currentSeed!!) {
                     currentSeed = seedValue

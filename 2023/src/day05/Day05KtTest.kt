@@ -1,5 +1,6 @@
 package day05
 
+import kotlinx.coroutines.runBlocking
 import org.junit.Test
 import org.junit.jupiter.api.assertThrows
 import kotlin.test.assertEquals
@@ -90,7 +91,7 @@ class Day05KtTest {
         assertEquals(86, almanac.getMappedValue(55))
         assertEquals(35, almanac.getMappedValue(13))
 
-        assertEquals(46, almanac.getMinLocationNumberForSeedRange())
+        assertEquals(46, runBlocking { almanac.getMinLocationNumberForSeedRange() })
     }
 
 }
