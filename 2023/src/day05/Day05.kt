@@ -7,6 +7,7 @@ fun main() {
     val almanac = Almanac(input)
 
     println(almanac.getSeedValues().minOf { it })
+    println(almanac.getMinLocationNumberForSeedRange())
 }
 
 class Almanac(input: List<String>) {
@@ -46,6 +47,25 @@ class Almanac(input: List<String>) {
 
     fun getSeedValues(): List<Long> {
         return seeds.map { getMappedValue(it) }
+    }
+
+    /**
+     * Process the seed values as if they are ranges, not individual
+     */
+    fun getMinLocationNumberForSeedRange(): Long {
+        var currentSeed: Long? = null
+
+
+        seeds.chunked(2).forEach {
+            println("Processing ${it[0]}")
+            for (seed in it[0]..it[0] + it[1]) {
+                val seedValue = getMappedValue(seed)
+                if (currentSeed == null || seedValue < currentSeed!!) {
+                    currentSeed = seedValue
+                }
+            }
+        }
+        return currentSeed!!
     }
 }
 

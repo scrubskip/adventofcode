@@ -89,6 +89,8 @@ class Day05KtTest {
         assertEquals(43, almanac.getMappedValue(14))
         assertEquals(86, almanac.getMappedValue(55))
         assertEquals(35, almanac.getMappedValue(13))
+
+        assertEquals(46, almanac.getMinLocationNumberForSeedRange())
     }
 
 }
