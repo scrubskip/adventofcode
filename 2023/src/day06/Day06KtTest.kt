@@ -15,10 +15,17 @@ class Day06KtTest {
     @Test
     fun testExample() {
         val timeToDistance = listOf(
-            Pair(7, 9),
-            Pair(15, 40),
-            Pair(30, 200)
+            Pair(7L, 9L),
+            Pair(15L, 40L),
+            Pair(30L, 200L)
         )
         assertEquals(288, getMarginOfError(timeToDistance))
+    }
+
+    @Test
+    fun testBigWinRange() {
+        val winRange = getWinRange(71530, 940200)
+        assertEquals(14, winRange.first)
+        assertEquals(71516, winRange.last)
     }
 }

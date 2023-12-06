@@ -2,15 +2,17 @@ package day06
 
 fun main() {
     val timeToDistance = listOf(
-        Pair(59, 543),
-        Pair(68, 1020),
-        Pair(82, 1664),
-        Pair(74, 1022)
+        Pair(59L, 543L),
+        Pair(68L, 1020L),
+        Pair(82L, 1664L),
+        Pair(74L, 1022L)
     )
     println(getMarginOfError(timeToDistance))
+
+    println(getMarginOfError(listOf(Pair(59688274, 543102016641022))))
 }
 
-fun getMarginOfError(input: List<Pair<Int, Int>>): Int {
+fun getMarginOfError(input: List<Pair<Long, Long>>): Long {
     return input.map {
         val range = getWinRange(it.first, it.second)
         range.last - range.first + 1
@@ -19,17 +21,17 @@ fun getMarginOfError(input: List<Pair<Int, Int>>): Int {
     }
 }
 
-fun getWinRange(time: Int, distance: Int): IntRange {
-    var startIndex: Int = (1..time).first {
+fun getWinRange(time: Long, distance: Long): LongRange {
+    var startIndex: Long = (1..time).first {
         getTotalDistance(it, time) > distance
     }
-    var endIndex: Int = (1 until time).reversed().first {
+    var endIndex: Long = (1 until time).reversed().first {
         getTotalDistance(it, time) > distance
     }
     // println("$time $distance: $startIndex to $endIndex")
-    return IntRange(startIndex, endIndex)
+    return LongRange(startIndex, endIndex)
 }
 
-fun getTotalDistance(buttonTime: Int, totalTime: Int): Int {
+fun getTotalDistance(buttonTime: Long, totalTime: Long): Long {
     return buttonTime * (totalTime - buttonTime)
 }
