@@ -39,4 +39,37 @@ class Day07KtTest {
 
         assertEquals(6440, getWinnings(input))
     }
+
+    @Test
+    fun testJoker() {
+        assertEquals(HandType.FIVE_OF_A_KIND, Hand("AAAAA", true).handType)
+        assertEquals(HandType.FOUR_OF_A_KIND, Hand("QJJQ2", true).handType)
+
+        assertEquals(HandType.THREE_OF_A_KIND, Hand("JJ5Q2", true).handType)
+        assertEquals(HandType.FULL_HOUSE, Hand("JQQ22", true).handType)
+
+        assertEquals(HandType.THREE_OF_A_KIND, Hand("JQT22", true).handType)
+
+        assertEquals(HandType.ONE_PAIR, Hand("JQT32", true).handType)
+        assertEquals(HandType.THREE_OF_A_KIND, Hand("7J478", true).handType)
+        assertEquals(HandType.THREE_OF_A_KIND, Hand("6QJ22", true).handType)
+        assertEquals(HandType.THREE_OF_A_KIND, Hand("T42JT", true).handType)
+        assertEquals(HandType.FOUR_OF_A_KIND, Hand("999TJ", true).handType)
+        assertEquals(HandType.FIVE_OF_A_KIND, Hand("JJJJJ", true).handType)
+
+        assertTrue(Hand("JKKK2", true) < Hand("QQQQ2", true))
+    }
+
+    @Test
+    fun testExampleWithJoker() {
+        val input = listOf(
+            "32T3K 765",
+            "T55J5 684",
+            "KK677 28",
+            "KTJJT 220",
+            "QQQJA 483"
+        )
+
+        assertEquals(5905, getWinnings(input, true))
+    }
 }
