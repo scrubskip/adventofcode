@@ -7,6 +7,7 @@ fun main() {
     val instructions = input[0]
     val map = NodeMap(input.drop(2))
     println(runInstructions(instructions, map))
+    println(runInstructionsAsGhost(instructions, map))
 }
 
 class Node(val id: String, val left: String, val right: String) {
@@ -29,6 +30,10 @@ class NodeMap(input: List<String>) {
     fun getNode(id: String): Node {
         return nodeMapping[id]!!
     }
+
+    fun getStartingNodes(): List<Node> {
+        return nodeMapping.entries.filter { it.key.endsWith("A") }.map { it.value }
+    }
 }
 
 fun runInstructions(instructions: String, nodeMap: NodeMap): Int {
@@ -45,4 +50,46 @@ fun runInstructions(instructions: String, nodeMap: NodeMap): Int {
         }
     }
     return stepCount
+}
+
+fun runInstructionsAsGhost(instructions: String, nodeMap: NodeMap): Long {
+    val instructionList = instructions.toList()
+    // Find all the starting nodes
+    val nodeList = nodeMap.getStartingNodes()
+    var initialZ = MutableList(nodeList.size) { 0L }
+    var stepCounts = MutableList(nodeList.size) { 0L }
+    nodeList.forEachIndexed { index, startNode ->
+        var node = startNode
+        var stepCount = 0
+        var foundZ = false
+        while (!node.id.endsWith("Z") || !foundZ) {
+            if (node.id.endsWith("Z")) {
+                println("${startNode.id} : found Z at $stepCount")
+                foundZ = true
+                initialZ[index] = stepCount.toLong()
+            }
+            val instruction = instructionList[stepCount++ % instructionList.size]
+            // println("$stepCount currentNode: ${node.id} ${node.left} ${node.right} $instruction")
+            node = when (instruction) {
+                'R' -> nodeMap.getNode(node.right)
+                'L' -> nodeMap.getNode(node.left)
+                else -> throw IllegalArgumentException("$instruction is not valid")
+            }
+        }
+
+        stepCounts[index] = stepCount.toLong()
+        println("${startNode.id} : found second Z at $stepCount : period = ${stepCount - initialZ[index]}")
+    }
+
+    // Now get the least common multiple : meh, google sheets
+
+    return stepCounts.reduce { acc, i -> acc * i }
+}
+
+fun gcd(a: Long, b: Long): Long {
+    return if (b == 0L) {
+        a
+    } else {
+        gcd(b, a % b)
+    }
 }
