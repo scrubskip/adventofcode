@@ -4,14 +4,15 @@ import java.io.File
 
 fun main() {
     val input = File("src/day09/day09.txt").readLines()
-    println(getSumOfNext(input))
+    println(getSumOfSequence(input))
+    println(getSumOfSequence(input, false))
 }
 
-fun getSumOfNext(input: List<String>) =
+fun getSumOfSequence(input: List<String>, next: Boolean = true) =
     input.map { it.split(" ").map { value -> value.toLong() } }
-        .sumOf { intList -> getNextInSequence(intList) }
+        .sumOf { intList -> getInSequence(intList, next) }
 
-fun getNextInSequence(input: List<Long>): Long {
+fun getInSequence(input: List<Long>, next: Boolean = true): Long {
     // First get differences
     var lists = mutableListOf<MutableList<Long>>(input.toMutableList())
 
@@ -27,13 +28,22 @@ fun getNextInSequence(input: List<Long>): Long {
         }
     }
     lists.add(differenceList.toMutableList())
+
     // OK, now, let's extrapolate
     while (lists.size > 1) {
         differenceList = lists.last()
         currentList = lists[lists.size - 2]
-        currentList.add(currentList.last() + differenceList.last())
+        if (next) {
+            currentList.add(currentList.last() + differenceList.last())
+        } else {
+            currentList.add(0, currentList.first() - differenceList.first())
+        }
         // now pop
         lists.remove(differenceList)
     }
-    return currentList.last()
+    return if (next) {
+        currentList.last()
+    } else {
+        currentList.first()
+    }
 }
