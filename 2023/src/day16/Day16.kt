@@ -1,6 +1,7 @@
 package day16
 
 import java.io.File
+import kotlin.math.max
 
 fun main() {
     val input = File("src/day16/day16.txt").readLines()
@@ -10,16 +11,15 @@ fun main() {
     caveMap.startBeam()
 
     println(caveMap.energizedTiles.size)
+    println(caveMap.findMax())
 }
 
 data class Coordinate(val x: Int, val y: Int)
 
 data class Beam(private val initial: Coordinate, var deltaX: Int, var deltaY: Int) {
     val startCoordinate = Coordinate(initial.x, initial.y)
-    val seenTiles = HashSet<Coordinate>()
 
     fun updatePosition(position: Coordinate) {
-        seenTiles.add(position)
         // println("{$startCoordinate ($deltaX, $deltaY): $position ")
     }
 }
@@ -50,8 +50,36 @@ class CaveMap(input: List<String>) {
         tiles = inputTiles.toMap()
     }
 
-    fun startBeam() {
-        addBeam(Beam(Coordinate(0, 0), 1, 0))
+    fun findMax(): Int {
+        var maxTiles = 0
+        (0..maxWidth).forEach { col ->
+            // Look down from top and down from bottom
+            startBeam(Beam(Coordinate(col, 0), 0, 1))
+            maxTiles = max(energizedTiles.size, maxTiles)
+            startBeam(Beam(Coordinate(col, maxHeight), 0, -1))
+            maxTiles = max(energizedTiles.size, maxTiles)
+        }
+        (0..maxHeight).forEach { row ->
+            startBeam(Beam(Coordinate(0, row), 1, 0))
+            maxTiles = max(energizedTiles.size, maxTiles)
+            startBeam(Beam(Coordinate(maxWidth, row), -1, 0))
+            maxTiles = max(energizedTiles.size, maxTiles)
+        }
+        return maxTiles
+    }
+
+    /**
+     * Clears everything except the tiles between runs
+     */
+    fun reset() {
+        beamQueue.clear()
+        seenBeams.clear()
+        energizedTiles.clear()
+    }
+
+    fun startBeam(startingBeam: Beam = Beam(Coordinate(0, 0), 1, 0)) {
+        reset()
+        addBeam(startingBeam)
 
         while (beamQueue.isNotEmpty()) {
             runBeam(beamQueue.removeAt(0))
@@ -119,7 +147,7 @@ class CaveMap(input: List<String>) {
 
     fun addBeam(beam: Beam) {
         if (!seenBeams.contains(beam.toString())) {
-            println("adding beam $beam")
+            // println("adding beam $beam")
             seenBeams.add(beam.toString())
             beamQueue.add(beam)
             energizedTiles.add(beam.startCoordinate)
