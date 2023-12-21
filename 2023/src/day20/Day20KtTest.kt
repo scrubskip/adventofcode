@@ -48,4 +48,18 @@ class Day20KtTest {
         repeat(1000) { pulseSenderCount.pressButton() }
         assertEquals(11687500, pulseSenderCount.lowCount * pulseSenderCount.highCount)
     }
+
+    @Test
+    fun testUntilRx() {
+        val input = listOf(
+            "broadcaster -> a",
+            "%a -> inv, con",
+            "&inv -> b",
+            "%b -> con",
+            "con -> rx",
+        )
+
+        val pulseSender = PulseSender(input)
+        println(pulseSender.pressButtonUntilRx())
+    }
 }

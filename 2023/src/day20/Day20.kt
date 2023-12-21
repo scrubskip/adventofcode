@@ -9,6 +9,11 @@ fun main() {
     pulseSenderCount.printSend = false
     repeat(1000) { pulseSenderCount.pressButton() }
     println(pulseSenderCount.lowCount * pulseSenderCount.highCount)
+
+    val pulseSenderRx = PulseSender(input)
+    pulseSenderRx.printSend = false
+    // for this input: dh, vf, mk, rn are the 4 cylers
+    println(pulseSenderRx.pressButtonUntilRx(listOf("dh", "vf", "mk", "rn")))
 }
 
 enum class Pulse {
@@ -24,6 +29,7 @@ class PulseSender(input: List<String>) {
     var lowCount = 0L
     var highCount = 0L
     var printSend = true
+    var watchList = mutableListOf<String>()
 
     init {
         modules = parseModules(input)
@@ -39,7 +45,7 @@ class PulseSender(input: List<String>) {
             if ("broadcaster" == module) {
                 moduleMap[module] = Broadcaster(module)
             } else if ("output" == module) {
-                moduleMap[module] = Output(module)
+                moduleMap[module] = Output(module, this)
             } else {
                 val name = module.drop(1)
                 if (module.startsWith("%")) {
@@ -59,7 +65,7 @@ class PulseSender(input: List<String>) {
                     moduleMap[moduleName]!!.addModule(
                         moduleMap.getOrPut(
                             destination
-                        ) { Output(destination) }
+                        ) { Output(destination, this) }
                     )
                 }
         }
@@ -76,6 +82,9 @@ class PulseSender(input: List<String>) {
         }
         if (printSend) {
             println("${msg.from} ${msg.pulse} -> ${msg.to}")
+        } else if (watchList.contains(msg.to) && msg.pulse == Pulse.LOW) {
+            println("${msg.from} ${msg.pulse} -> ${msg.to} : $counter")
+            watchList.remove(msg.to)
         }
         if (module.shouldPropagate(msg.pulse)) {
             val pulseToSend = module.processPulse(msg.pulse, msg.from)
@@ -91,6 +100,22 @@ class PulseSender(input: List<String>) {
 
     fun pressButton() {
         sendPulse(PulseMessage("button", "broadcaster", Pulse.LOW))
+    }
+
+    var gotRx = false
+    var counter = 1L
+
+    fun pressButtonUntilRx(inputWatch: List<String> = listOf()) {
+        watchList.clear()
+        watchList.addAll(inputWatch)
+        while (!gotRx) {
+            pressButton()
+            counter++
+        }
+    }
+
+    fun rxReceived() {
+        gotRx = true
     }
 }
 
@@ -141,8 +166,12 @@ class Conjunction(name: String) : Module(name) {
     }
 }
 
-class Output(name: String) : Module(name) {
+class Output(name: String, val pulseSender: PulseSender) : Module(name) {
+
     override fun processPulse(pulse: Pulse, from: String): Pulse {
+        if (name == "rx" && pulse == Pulse.LOW) {
+            pulseSender.rxReceived()
+        }
         return pulse
     }
 }
