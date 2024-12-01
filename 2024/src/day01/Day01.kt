@@ -15,6 +15,7 @@ fun main() {
     }
 
     println(getDistance(list1, list2))
+    println(getSimilarityScore(list1, list2))
 }
 
 fun getDistance(list1: List<Int>, list2: List<Int>): Int {
@@ -27,5 +28,13 @@ fun getDistance(list1: List<Int>, list2: List<Int>): Int {
 
     return sorted1.withIndex().sumOf {
         (sorted2[it.index] - it.value).absoluteValue
+    }
+}
+
+fun getSimilarityScore(inputList: List<Int>, similarList: List<Int>): Int {
+    // Get the count of the similar list
+    val countMap = similarList.groupingBy { it }.eachCount()
+    return inputList.sumOf {
+        it * countMap.getOrDefault(it, 0)
     }
 }
