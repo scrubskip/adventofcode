@@ -7,6 +7,18 @@ fun main() {
     val rootMonkey = monkeys["root"]
     println("${monkeys.size}")
     println(rootMonkey!!.getValue(monkeys))
+
+    println(findHumanValue(monkeys))
+}
+
+fun findHumanValue(monkeys: Map<String, Monkey>): Long {
+    val humanMonkey = monkeys["humn"] as HumanMonkey
+    val rootMonkey = monkeys["root"] as DependentMonkey
+
+    while (!rootMonkey.getEqualValue(monkeys)) {
+        humanMonkey.currentValue = humanMonkey.getValue(monkeys) + 1
+    }
+    return humanMonkey.getValue(monkeys)
 }
 
 abstract class Monkey(val key: String) {
@@ -18,7 +30,9 @@ abstract class Monkey(val key: String) {
             val key = input.substring(0, 4)
             val value = input.substring(6)
             val number = value.toLongOrNull()
-            return if (number != null) {
+            return if ("humn" == key) {
+                return HumanMonkey(key)
+            } else if (number != null) {
                 NumberMonkey(key, number)
             } else {
                 val key1 = input.substring(6, 6 + 4)
@@ -47,22 +61,34 @@ class DependentMonkey(
     val monkeyKey2: String,
     val operation: String
 ) : Monkey(key) {
-    var cachedValue: Long? = null
 
     override fun getValue(monkeys: Map<String, Monkey>): Long {
-        if (cachedValue != null) {
-            return cachedValue!!
-        }
-
         val monkeyVal1 = monkeys[monkeyKey1]!!.getValue(monkeys)
         val monkeyVal2 = monkeys[monkeyKey2]!!.getValue(monkeys)
-        cachedValue = when (operation) {
+
+        return when (operation) {
             "+" -> monkeyVal1 + monkeyVal2
             "-" -> monkeyVal1 - monkeyVal2
             "*" -> monkeyVal1 * monkeyVal2
             "/" -> monkeyVal1 / monkeyVal2
             else -> throw Exception("Invalid operation $operation")
         }
-        return cachedValue!!
+    }
+
+    fun getEqualValue(monkeys: Map<String, Monkey>): Boolean {
+        val monkeyVal1 = monkeys[monkeyKey1]!!.getValue(monkeys)
+        val monkeyVal2 = monkeys[monkeyKey2]!!.getValue(monkeys)
+        return monkeyVal1 == monkeyVal2
+    }
+}
+
+class HumanMonkey(
+    key: String
+) : Monkey(key) {
+
+    var currentValue: Long = 0
+
+    override fun getValue(monkeys: Map<String, Monkey>): Long {
+        return currentValue
     }
 }
