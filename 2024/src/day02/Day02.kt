@@ -13,6 +13,8 @@ fun main() {
 
     val output = input.count { list -> isSafe(list) }
     println(output)
+    val output2 = input.count { list -> isSafeTolerant(list) }
+    println(output2)
 }
 
 fun isSafe(input: List<Int>): Boolean {
@@ -32,4 +34,17 @@ fun isSafe(input: List<Int>): Boolean {
         }
     }
     return returnValue
+}
+
+fun isSafeTolerant(input: List<Int>): Boolean {
+    if (isSafe(input)) {
+        return true
+    }
+    // Otherwise, check variations
+    for (index in input.indices) {
+        if (isSafe(input.filterIndexed { i, _ -> i != index })) {
+            return true
+        }
+    }
+    return false
 }

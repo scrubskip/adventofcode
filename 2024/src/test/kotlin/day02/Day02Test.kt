@@ -17,5 +17,8 @@ class Day02Test {
 
         val output = input.count { list -> isSafe(list) }
         assertEquals(2, output)
+
+        val output2 = input.count { list -> isSafeTolerant(list) }
+        assertEquals(4, output2)
     }
 }
