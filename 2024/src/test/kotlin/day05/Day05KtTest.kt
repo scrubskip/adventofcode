@@ -64,4 +64,12 @@ class Day05KtTest {
         println(getMiddles(EXAMPLE_INPUT, rules))
         assertEquals(143, getMiddles(EXAMPLE_INPUT, rules).sum())
     }
+
+    @Test
+    fun fixOrder() {
+        val rules = getRules(RULES_INPUT)
+        val fixed1 = fixOrder(EXAMPLE_INPUT[3], rules)
+        println(fixed1)
+        assertTrue(isPageOrdered(fixed1, rules))
+    }
 }
