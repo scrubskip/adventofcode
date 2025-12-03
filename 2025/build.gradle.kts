@@ -1,5 +1,6 @@
 plugins {
-    kotlin("jvm") version "2.1.0"
+    kotlin("jvm") version "2.2.21"
+    application
 }
 
 repositories {
@@ -16,12 +17,12 @@ dependencies {
 tasks {
     sourceSets {
         main {
-            kotlin.srcDirs("src")
+            kotlin.srcDir("src")
         }
     }
 
     wrapper {
-        gradleVersion = "8.11.1"
+        gradleVersion = "9.2.1"
     }
 
 }
