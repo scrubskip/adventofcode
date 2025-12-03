@@ -5,36 +5,22 @@ import kotlin.math.absoluteValue
 
 fun main() {
     val input = File("src/day01/day01input.txt").readLines()
-    val list1 = mutableListOf<Int>()
-    val list2 = mutableListOf<Int>()
 
-    input.forEach {
-        val string = it.split(" ", limit = 2)
-        list1.add(string[0].trim().toInt())
-        list2.add(string[1].trim().toInt())
-    }
-
-    println(getDistance(list1, list2))
-    println(getSimilarityScore(list1, list2))
+    println(getPassword(input))
 }
 
-fun getDistance(list1: List<Int>, list2: List<Int>): Int {
-    if (list1.size != list2.size) {
-        throw Exception("Not the right size ${list1.size}, ${list2.size}")
+fun getPassword(instructions : List<String>) : Int {
+    var position = 50
+    var password = 0
+    for (instruction in instructions) {
+        var movement = instruction.substring(1).toInt()
+        if (instruction.startsWith("L")) {
+            movement = 0 - movement
+        }
+        position = (position + movement) % 100
+        if (position == 0) {
+            password++
+        }
     }
-
-    val sorted1 = list1.sorted()
-    val sorted2 = list2.sorted()
-
-    return sorted1.withIndex().sumOf {
-        (sorted2[it.index] - it.value).absoluteValue
-    }
-}
-
-fun getSimilarityScore(inputList: List<Int>, similarList: List<Int>): Int {
-    // Get the count of the similar list
-    val countMap = similarList.groupingBy { it }.eachCount()
-    return inputList.sumOf {
-        it * countMap.getOrDefault(it, 0)
-    }
+    return password
 }
