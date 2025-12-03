@@ -19,7 +19,13 @@ class Day01KtTest {
                 "L82")
 
         assertEquals(3, getPassword(list1))
+
+        assertEquals(6, getPassword(list1, true))
     }
 
+    @Test
+    fun testRollover() {
+        assertEquals(10, getPassword(listOf("L1000"), true))
+    }
 
 }
