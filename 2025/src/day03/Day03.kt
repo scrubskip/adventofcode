@@ -20,3 +20,29 @@ fun getJoltage(batteries : String) : Int {
   return batteries[firstIndexOfMax].digitToInt() * 10 + batteries[nextIndex].digitToInt()
 }
 
+fun getJoltageWithWindow(batteries : String, joltageCount: Int) : Long {
+  var returnString = ""
+  var onIndices = mutableSetOf<Int>()
+  var windowString = ""
+  var windowIndex = 0
+
+  // When we have space, take the first joltage items and look for the max
+  while (onIndices.size < joltageCount) {
+    windowString = batteries.substring(windowIndex,
+                                       (windowIndex + joltageCount)
+                                         .coerceAtMost(batteries.length)
+    )
+    println("$windowString")
+    val maxIndexInWindow = windowString.indices
+      .maxBy { if (!onIndices.contains(it + windowIndex)) windowString[it].digitToInt() else -1 }
+    val adjustedIndex = maxIndexInWindow + windowIndex
+    onIndices.add(adjustedIndex)
+    println("adding ${batteries[adjustedIndex]} at ${adjustedIndex}")
+    if (windowIndex + joltageCount < batteries.length) {
+      windowIndex++
+    }
+  }
+
+  return batteries.filterIndexed { index, char -> onIndices.contains(index)}.toLong()
+}
+
