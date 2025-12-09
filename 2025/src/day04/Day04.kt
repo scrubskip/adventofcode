@@ -7,11 +7,15 @@ fun main() {
   val floorPlan = FloorPlan(input)
 
   println(floorPlan.findAccessible().size)
+
+  val floorPlan2 = FloorPlan(input)
+  println(floorPlan2.removeAllAccessible())
 }
 
 data class Coordinate(val x: Int, val y: Int)
 
 class FloorPlan(val floor : List<String>) {
+  val _floor = floor.toMutableList()
   val rows = floor.size
   val cols = floor.first().length
 
@@ -35,8 +39,13 @@ class FloorPlan(val floor : List<String>) {
     return returnList
   }
 
+  fun removeCell(coordinate: Coordinate) {
+    _floor[coordinate.y] = _floor[coordinate.y].replaceRange(coordinate.x,coordinate.x+1,
+                                     EMPTY.toString())
+  }
+
   fun getItemAtCoordinate(coordinate: Coordinate) : Char {
-    return floor[coordinate.y][(coordinate.x)]
+    return _floor[coordinate.y][(coordinate.x)]
   }
 
   fun getNeighbors(coordinate: Coordinate) : List<Coordinate> {
@@ -50,5 +59,21 @@ class FloorPlan(val floor : List<String>) {
     }
     return returnList.toList()
   }
+
+  fun removeAllAccessible() : Int {
+    var removeCount = 0
+    while (true) {
+      val accessible = findAccessible()
+      accessible.forEach { removeCell(it) }
+
+      if (accessible.isEmpty()) {
+        break
+      } else {
+        removeCount+= accessible.size
+      }
+    }
+    return removeCount
+  }
+
 
 }
